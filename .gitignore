@@ -11,3 +11,7 @@ Desktop.ini
 # Temp
 ~$*.xlsx
 ~$*.csv
+
+# Dokumen resmi (unduh dari Puspresnas, jangan commit)
+Kisi-kisi_page_*.png
+Teknis_page_*.png

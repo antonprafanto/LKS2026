@@ -20,6 +20,13 @@ def main() -> None:
     kisi1 = ROOT / "Kisi-kisi_page_1.png"
     kisi2 = ROOT / "Kisi-kisi_page_2.png"
 
+    if not kisi1.exists() or not kisi2.exists():
+        print(
+            "Lewati ekstraksi: letakkan Kisi-kisi_page_1.png dan _2.png di root repo "
+            "(unduh dari Puspresnas) lalu jalankan ulang."
+        )
+        return
+
     # Kemendikdasmen / Pusat Prestasi Nasional header (top-left)
     crop_save(kisi1, (60, 55, 720, 260), ASSETS / "logo-kemendikdasmen.png")
 

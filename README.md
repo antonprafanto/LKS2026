@@ -7,7 +7,7 @@ Repositori pendukung juri **LKS Pendidikan Menengah Tingkat Nasional XXXIV 2026*
 | Folder / File | Deskripsi |
 |---------------|-----------|
 | [`docs/SOP-JURI.md`](docs/SOP-JURI.md) | Standard Operating Procedure penilaian untuk juri |
-| [`docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx`](docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx) | Slide briefing juri (PowerPoint, ~20 slide) |
+| [`docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx`](docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx) | Slide briefing juri branded Kemendikdasmen/LKS + demo Modul E |
 | [`templates/`](templates/) | Lembar penilaian siap pakai (CSV + **Excel dengan rumus**) |
 | [`docs/SKENARIO-SOAL-CONTOH.md`](docs/SKENARIO-SOAL-CONTOH.md) | Skenario latihan juri (undian, run, kunci penilaian) |
 | `Kisi-kisi_page_*.png` | Kisi-kisi resmi bidang lomba |

@@ -37,6 +37,10 @@ UNDIAN_CAT_FIRST = 10
 UNDIAN_CAT_LAST = 18
 UNDIAN_POS_FIRST = 25
 UNDIAN_POS_LAST = 33
+UNDIAN_SHEET = "'Undian Kubus'"
+CAT_RANGE = f"{UNDIAN_SHEET}!$A${UNDIAN_CAT_FIRST}:$D${UNDIAN_CAT_LAST}"
+POS_RANGE = f"{UNDIAN_SHEET}!$A${UNDIAN_POS_FIRST}:$E${UNDIAN_POS_LAST}"
+MODUL_D_BOBOT_SUM = 12.9  # sesuai dokumen teknis (D2a 0.3 + D2b 0.6)
 
 
 def style_header_row(ws, row: int, cols: int) -> None:
@@ -83,7 +87,7 @@ def sheet_undian_kubus(wb: Workbook) -> None:
         for c, val in enumerate(row, 1):
             ws.cell(i, c, val)
 
-    cat_range = f"$A${UNDIAN_CAT_FIRST}:$D${UNDIAN_CAT_LAST}"
+    cat_range = CAT_RANGE
 
     m_title = UNDIAN_CAT_LAST + 2
     ws.cell(m_title, 1, "KONFIGURASI MARKER RAK (isi warna: Merah / Hijau / Biru)")
@@ -433,9 +437,10 @@ def sheet_modul_d(wb: Workbook) -> None:
         ws.cell(i, 6, f"=IF(E{i}=\"\",0,E{i}*D{i})")
 
     tr = start + 1 + len(items)
-    ws.cell(tr, 2, "TOTAL")
+    ws.cell(tr, 2, "TOTAL (skala 12)")
     ws.cell(tr, 4, 12.0)
-    ws.cell(tr, 6, f"=SUM(F{start+1}:F{tr-1})")
+    ws.cell(tr, 6, f"=ROUND(SUM(F{start+1}:F{tr-1})*12/{MODUL_D_BOBOT_SUM},2)")
+    ws.cell(tr, 7, f"Bobot mentah item = {MODUL_D_BOBOT_SUM}")
     ws.cell(tr, 2).font = Font(bold=True)
 
     set_widths(ws, {1: 8, 2: 34, 3: 16, 4: 8, 5: 12, 6: 10, 7: 24})
@@ -461,18 +466,19 @@ def sheet_modul_e(wb: Workbook) -> None:
 
     for n in range(1, 10):
         r = start + n
+        undian_row = UNDIAN_POS_FIRST + n - 1
         ws.cell(r, 1, n)
-        # ID kubus di kolom B — warna & bentuk otomatis dari Undian/Katalog
-        ws.cell(r, 3, f'=IF(B{r}="","",VLOOKUP(B{r},Undian!$A${UNDIAN_CAT_FIRST}:$D${UNDIAN_CAT_LAST},2,FALSE))')
-        ws.cell(r, 4, f'=IF(B{r}="","",VLOOKUP(B{r},Undian!$A${UNDIAN_CAT_FIRST}:$D${UNDIAN_CAT_LAST},3,FALSE))')
-        ws.cell(r, 5, f'=IF(B{r}="","",IFERROR(VLOOKUP(B{r},Undian!$A${UNDIAN_POS_FIRST}:$E${UNDIAN_POS_LAST},4,FALSE),""))')
-        ws.cell(r, 9, 6.67)
+        ws.cell(r, 2, f"=IF({UNDIAN_SHEET}!A{undian_row}=\"\",\"\",{UNDIAN_SHEET}!A{undian_row})")
+        ws.cell(r, 3, f'=IF(B{r}="","",VLOOKUP(B{r},{CAT_RANGE},2,FALSE))')
+        ws.cell(r, 4, f'=IF(B{r}="","",VLOOKUP(B{r},{CAT_RANGE},3,FALSE))')
+        ws.cell(r, 5, f'=IF(B{r}="","",IFERROR(VLOOKUP(B{r},{POS_RANGE},4,FALSE),""))')
+        ws.cell(r, 9, "=60/9")
         ws.cell(r, 10, f"=IF(H{r}=\"\",0,H{r}*I{r})")
 
     tr = start + 10
     ws.cell(tr, 5, "TOTAL MODUL E")
     ws.cell(tr, 9, 60.0)
-    ws.cell(tr, 10, f"=SUM(J{start+1}:J{tr-1})")
+    ws.cell(tr, 10, f"=ROUND(SUM(J{start+1}:J{tr-1}),2)")
     ws.cell(tr, 5).font = Font(bold=True)
 
     ws.cell(tr + 2, 1, "Pelanggaran (1=ya):")
@@ -566,8 +572,8 @@ def main() -> None:
     sheet_modul_b(wb)
     sheet_modul_c(wb)
     sheet_modul_d(wb)
+    sheet_undian_kubus(wb)  # sebelum Modul E (referensi rumus)
     sheet_modul_e(wb)
-    sheet_undian_kubus(wb)
     sheet_log_run(wb)
     sheet_rekap(wb)
     OUT.parent.mkdir(parents=True, exist_ok=True)

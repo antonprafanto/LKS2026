@@ -1,0 +1,37 @@
+LKS 2026 - LEMBAR UNDIAN POSISI KUBUS
+Run ID:,Tim No:,Nama Tim:,Hari:,Tanggal:,Arena No:
+Fase:,Sebelum SIAP / Setelah SIAP (acak ulang):,Juru Acak:,Juri Saksi:
+Waktu Undian:
+
+KATALOG KUBUS (9 buah)
+ID Kubus,Warna,Bentuk,RGB Referensi
+K-M1,Merah,Lingkaran,255-0-0
+K-M2,Merah,Persegi,255-0-0
+K-M3,Merah,Segitiga,255-0-0
+K-H1,Hijau,Lingkaran,0-255-0
+K-H2,Hijau,Persegi,0-255-0
+K-H3,Hijau,Segitiga,0-255-0
+K-B1,Biru,Lingkaran,0-0-255
+K-B2,Biru,Persegi,0-0-255
+K-B3,Biru,Segitiga,0-0-255
+
+POSISI AWAL SETELAH UNDIAN
+ID Kubus,Warna,Bentuk,Lokasi Awal,Rak/Stand,Slot,Posisi Benar (1/0),Target Rak,Target Marker Warna,Catatan
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+
+KONFIGURASI MARKER RAK (hari ini)
+Rak 1 Slot 1 (kiri),Rak 1 Slot 2 (tengah),Rak 1 Slot 3 (kanan),Rak 2 Slot 1,Rak 2 Slot 2,Rak 2 Slot 3,Rak 3 Slot 1,Rak 3 Slot 2,Rak 3 Slot 3
+,,,,,,,,
+
+OBSTACLE (posisi bebas - catat koordinat/area)
+Obs 1,Obs 2,Obs 3,Obs 4,Obs 5,Obs 6,Obs 7,Obs 8,Obs 9,Obs 10
+,,,,,,,,,,
+
+Tanda Tangan Juru Acak:,Tanda Tangan Juri:,Tanda Tangan Peserta (saksi):

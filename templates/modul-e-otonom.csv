@@ -1,0 +1,33 @@
+LKS 2026 - MODUL E: PERFORMANSI ROBOT SISTEM OTONOM (60 poin - Measurement)
+Tim No:,Nama Tim:,Kontingen:,Hari:,Tanggal:,Run No:,Trial/Final:
+Arena No:,Waktu Mulai Run:,Waktu Selesai:,Durasi:
+Juri Penilai:,Juri Pendamping:
+Run ID,Tanggal,Hari,Trial/Final,Skor Modul E,Catatan
+H2-R1,,H2,Trial,,,
+H2-R2,,H2,Trial,,,
+H3-R1,,H3,Final,,,
+H3-R2,,H3,Final,,,
+
+PENILAIAN PER KUBUS (default 6.67 poin/kubus - sesuaikan CIS jika berbeda)
+No Kubus,Warna,Bentuk,Posisi Awal (rak/stand/slot),Target Rak,Target Slot/Marker,Hasil (1/0),Bobot,Skor,Catatan
+1,,,,,,,6.67,,
+2,,,,,,,6.67,,
+3,,,,,,,6.67,,
+4,,,,,,,6.67,,
+5,,,,,,,6.67,,
+6,,,,,,,6.67,,
+7,,,,,,,6.67,,
+8,,,,,,,6.67,,
+9,,,,,,,6.67,,
+TOTAL,,,,,,,60.00,,
+
+LOG PELANGGARAN (centang jika terjadi - run/item batal sesuai SOP)
+P1,Peserta sentuh laptop setelah SIAP,,,
+P2,Peserta sentuh robot setelah START,,,
+P3,Robot tidak distart via tombol START di robot,,,
+P4,Penempatan kubus manual oleh peserta,,,
+
+RETRY
+Retry No:,Waktu:,Alasan:,Kubus dikeluarkan dari robot (1/0):,Posisi diacak ulang (1/0):,Program diubah (1/0):
+
+Tanda Tangan Juri:,Tanda Tangan Chief Expert:

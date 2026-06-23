@@ -1,0 +1,20 @@
+LKS 2026 - MODUL C: PEMBUATAN DAN PERAKITAN ROBOT (10 poin - Judgement)
+Tim No:,Nama Tim:,Kontingen:,Tanggal:,Waktu Mulai Perakitan:,Waktu Selesai (max 2 jam):
+Juri 1:,Juri 2:,Juri 3:
+Sub-Kriteria,Deskripsi,Max Mark,Juri 1 (0-3),Juri 2 (0-3),Juri 3 (0-3),Rata-rata,Skor Akhir,Catatan
+C1,Kualitas Perakitan L-Channel sebagai Penyangga Utama Lift,2.5,,,,,,
+C2,Integrasi Sistem Angkat / Gripper / Lifter,2.5,,,,,,
+C3,Kualitas Rewiring (rapi aman tidak terbuka/terjepit),2.5,,,,,,
+C4,Kelayakan Operasional (tombol STOP fungsi struktur stabil),2.5,,,,,,
+TOTAL MODUL C,,10.0,,,,,,
+
+CHECKLIST INSPEKSI KELAYAKAN (1=Lulus 0=Tidak)
+I1,L-Channel terpasang sebagai penyangga utama sistem angkat,,,
+I2,Sistem manajemen objek terpasang kuat di L-Channel,,,
+I3,Tidak ada kabel terbuka atau terjepit,,,
+I4,Tombol STOP merah terlihat dan berfungsi,,,
+I5,Perakitan selesai dalam batas 2 jam,,,
+I6,Robot aman untuk dioperasikan (K3),,,
+
+Tanda Tangan Juri 1:,Tanda Tangan Juri 2:,Tanda Tangan Juri 3:
+Chief Expert:

@@ -1,0 +1,33 @@
+LKS 2026 - MODUL B: JURNAL / LAPORAN TEKNIS (10 poin: J 8 + M 2)
+Tim No:,Nama Tim:,Kontingen:,Tanggal Pengumpulan:,Deadline:,Tepat Waktu (1/0):
+Juri 1:,Juri 2:,Juri 3:
+No,Aspek Penilaian,Tipe,Max,Juri 1 (0-3),Juri 2 (0-3),Juri 3 (0-3),Rata-rata,Skor Akhir,Ada (1/0),Catatan
+B-J1,Kualitas Fabrikasi Rangka dan Stabilitas Struktur,J,1.5,,,,,,
+B-J2,Manajemen Pengkabelan (Wiring),J,1.5,,,,,,
+B-J3,Integrasi Sistem Penggerak,J,1.5,,,,,,
+B-J4,Kalibrasi Sensor dan Aktuator,J,1.5,,,,,,
+B-J5,Optimasi Software-Hardware,J,1.5,,,,,,
+B-J6,Kelengkapan Dokumentasi (desain/algoritma/flowchart),J,0.5,,,,,,
+SUBTOTAL JUDGEMENT,,,8.0,,,,,,
+B-M1,Ketepatan Mengumpulkan sesuai Waktu,M,2.0,,,,,,,
+SUBTOTAL MEASUREMENT,,,2.0,,,,,,,
+TOTAL MODUL B,,,10.0,,,,,,,
+
+CHECKLIST KELENGKAPAN JURNAL (centang 1/0)
+C1,Analisis Tugas dan Strategi,,,
+C2,Desain Mekanik (CAD/sketsa + dimensi),,,
+C3,Diagram Blok Sistem,,,
+C4,Bill of Materials,,,
+C5,Dokumentasi Fabrikasi,,,
+C6,Manajemen Kelistrikan dan Wiring,,,
+C7,Penempatan Sensor (justifikasi),,,
+C8,Arsitektur Perangkat Lunak,,,
+C9,Algoritma Navigasi,,,
+C10,Algoritma Visi Komputer/Sensor,,,
+C11,Flowchart Program,,,
+C12,Data Kalibrasi,,,
+C13,Tuning Kontroler,,,
+C14,Log Troubleshooting,,,
+
+Tanda Tangan Juri 1:,Tanda Tangan Juri 2:,Tanda Tangan Juri 3:
+Chief Expert:

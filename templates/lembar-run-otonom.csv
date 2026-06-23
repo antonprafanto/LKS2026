@@ -1,0 +1,32 @@
+LKS 2026 - LEMBAR LOG RUN OTONOM
+Tim No:,Nama Tim:,Kontingen:,Arena No:
+Hari:,Tanggal:,Juri Penilai:,Juri Pendamping:
+
+RUN
+Run No:,Run ID:,Trial/Final:,Waktu SIAP:,Waktu START:,Waktu Selesai:
+Undian ulang setelah SIAP (1/0):,Retry (1/0):,Retry No:
+
+CHECKLIST PROSEDUR JURI
+[ ] Layout arena dijelaskan ke peserta
+[ ] Peserta nyatakan SIAP
+[ ] Laptop tidak disentuh setelah SIAP
+[ ] Posisi kubus diacak / diacak ulang
+[ ] Sinyal START diberikan
+[ ] Peserta tekan tombol START di robot
+[ ] Run berjalan otonom
+[ ] Hasil dicatat di modul-e-otonom.csv
+
+KRONOLOGI KEJADIAN
+Waktu,Kejadian,Catatan
+,,Robot start dari posisi start
+,,Robot navigasi ke ...
+,,Pick kubus ...
+,,Place kubus ...
+,,Robot selesai / timeout / STOP darurat
+
+HASIL SINGKAT
+Total kubus berhasil ditempatkan benar:,/9
+Skor Modul E run ini:,/60
+Pelanggaran (ya/tidak):,Jenis:
+
+Tanda Tangan Juri:,Tanda Tangan Peserta:,Tanda Tangan Chief Expert:

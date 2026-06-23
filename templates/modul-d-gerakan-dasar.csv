@@ -1,0 +1,21 @@
+LKS 2026 - MODUL D: GERAKAN DASAR & MANAJEMEN OBJEK (12 poin - Measurement)
+Tim No:,Nama Tim:,Kontingen:,Hari:,Tanggal:,Waktu Mulai:,Waktu Selesai (max 15 menit):
+Juri Penilai:,Juri Pendamping:
+ID,Evaluasi,Indikator / Bukti,Bobot (poin),Hasil (1/0),Skor,Catatan
+D1a,Robot bergerak maju 200-300 mm,Observasi gerak maju,0.50,,,
+D1b,Robot bergerak mundur 200-300 mm,Observasi gerak mundur,0.50,,,
+D1c,Robot bergerak ke kanan 200-300 mm,Observasi gerak kanan,0.50,,,
+D1d,Robot bergerak ke kiri 200-300 mm,Observasi gerak kiri,0.50,,,
+D2a,Maju dan stop 50-100 mm dari dinding,Observasi + pengukuran,0.30,,,
+D2b,Kanan dan stop 50-100 mm dari dinding,Observasi + pengukuran,0.60,,,
+D3,Ikuti garis hitam bentuk U,Line follower utuh,1.00,,,
+D4,Deteksi kubus merah,Teks merah muncul di monitor,1.00,,,
+D5,Deteksi kubus hijau,Teks hijau muncul di monitor,1.00,,,
+D6,Deteksi kubus biru,Teks biru muncul di monitor,1.00,,,
+D7,Deteksi lingkaran merah,Teks O-merah muncul di monitor,1.00,,,
+D8,Deteksi lingkaran hijau,Teks O-hijau muncul di monitor,1.00,,,
+D9,Arm ambil kubus dari rak secara otonom,Observasi pick dari rak,2.00,,,
+D10,Arm letakkan kubus ke standbox,Observasi place ke stand,2.00,,,
+TOTAL MODUL D,,,12.00,,,
+
+Tanda Tangan Juri:,Tanda Tangan Chief Expert:

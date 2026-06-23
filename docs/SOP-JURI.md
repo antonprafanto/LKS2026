@@ -115,7 +115,7 @@ SOP ini mengatur peran juri dalam penilaian **5 modul** (A–E) selama 3 hari lo
 ## 4. SOP Penilaian Modul A — Organisasi & Manajemen Kerja (8 poin, J)
 
 **Hari penilaian:** H1, H2, H3  
-**Template:** `templates/modul-a-organisasi.csv`
+**Template:** sheet `Modul A` di `templates/LKS2026-Penilaian-Juri.xlsx`
 
 | Sub | Kriteria | Max (contoh CIS) |
 |-----|----------|------------------|
@@ -141,7 +141,7 @@ SOP ini mengatur peran juri dalam penilaian **5 modul** (A–E) selama 3 hari lo
 ## 5. SOP Penilaian Modul B — Jurnal Teknis (10 poin: J 8 + M 2)
 
 **Hari penilaian:** H1  
-**Template:** `templates/modul-b-jurnal.csv`  
+**Template:** sheet `Modul B` di `templates/LKS2026-Penilaian-Juri.xlsx`  
 **Batas:** Maks. 4 lembar isi (8 halaman A4), tidak termasuk sampul
 
 ### Checklist kelengkapan (Judgement)
@@ -172,7 +172,7 @@ SOP ini mengatur peran juri dalam penilaian **5 modul** (A–E) selama 3 hari lo
 ## 6. SOP Penilaian Modul C — Perakitan Robot (10 poin, J)
 
 **Hari penilaian:** H1  
-**Template:** `templates/modul-c-perakitan.csv`
+**Template:** sheet `Modul C` di `templates/LKS2026-Penilaian-Juri.xlsx`
 
 ### Alur inspeksi
 

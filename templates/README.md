@@ -1,32 +1,42 @@
 # Template Penilaian — Panduan
 
-Buka file `.csv` dengan **Excel** atau **Google Sheets** (Import → Replace data).
+## Pakai file ini saja
 
-## Daftar Template
+**[`LKS2026-Penilaian-Juri.xlsx`](LKS2026-Penilaian-Juri.xlsx)** — satu workbook Excel berisi semua lembar penilaian dengan kolom terpisah dan rumus otomatis.
 
-| File | Modul | Hari | Metode |
-|------|-------|------|--------|
-| **`LKS2026-Penilaian-Juri.xlsx`** | A, B, C, D, E + Rekap | Semua | **Excel + rumus otomatis** |
-| `modul-a-organisasi.csv` | A — Organisasi & Manajemen Kerja | H1–H3 | Judgement |
-| `modul-b-jurnal.csv` | B — Jurnal Teknis | H1 | J + M |
-| `modul-c-perakitan.csv` | C — Perakitan Robot | H1 | Judgement |
-| `modul-d-gerakan-dasar.csv` | D — Gerakan Dasar | H2 | Measurement |
-| `modul-e-otonom.csv` | E — Performa Otonom | H2–H3 | Measurement |
-| `lembar-undian-kubus.csv` | Pengacakan posisi kubus | H2–H3 | — |
-| `lembar-run-otonom.csv` | Log per run otonom | H2–H3 | — |
-| `rekapitulasi-skor.csv` | Rekap total semua modul | H3 | — |
+> File `.csv` di folder ini adalah format lama. Buka langsung di Excel akan tampil mentah (satu kolom). **Gunakan file `.xlsx` di atas.**
 
-## Pengisian Judgement (Modul A, B, C)
+## Sheet di dalam Excel
 
-- Isi skor **Juri 1, Juri 2, Juri 3** (0–3).
-- Kolom **Rata-rata** dihitung otomatis jika dibuka di Excel.
-- Jika **Selisih Max-Min ≥ 2** → ulangi penilaian aspek tersebut.
+| Sheet | Fungsi |
+|-------|--------|
+| **Panduan** | Cara pakai singkat |
+| **Modul A–E** | Penilaian semua modul + rumus skor |
+| **Undian Kubus** | Pengacakan posisi — ID kubus → warna/bentuk otomatis |
+| **Log Run Otonom** | Checklist SIAP/START + kronologi + tarik skor dari Modul E |
+| **Rekapitulasi** | Total A–E otomatis |
 
-## Pengisian Measurement (Modul D, E)
+## Alur pakai (per tim)
 
-- Isi **1** (berhasil) atau **0** (gagal).
-- Jangan gunakan nilai lain.
+1. **Save As** — duplikat 1 file Excel per tim.
+2. Isi **Undian Kubus** setelah pengacakan (kolom ID kubus).
+3. Saat run otonom: isi **Log Run Otonom** (checklist + kronologi).
+4. Isi **Modul E** — ketik ID kubus di kolom B → warna/bentuk/posisi awal terisi otomatis.
+5. Centang **Hasil (1/0)** per kubus → skor terhitung.
+6. **Rekapitulasi** mengambil total semua modul.
+7. Input skor resmi ke **CIS**.
 
-## Catatan
+## Rumus penting
 
-Bobot detail Modul E mengacu **Marking Scheme CIS**. Template ini memakai pembagian rata **6,67 poin × 9 kubus = 60 poin**.
+- **Undian:** `VLOOKUP` ID kubus → katalog warna & bentuk
+- **Modul E:** terhubung ke sheet Undian Kubus
+- **Log Run:** `COUNTIF` kubus sukses + skor dari Modul E
+- **Modul A/B/C:** rata-rata 3 juri → skor akhir
+
+## Regenerasi file Excel
+
+```bash
+python scripts/generate_excel_templates.py
+```
+
+Acuan: [`docs/SOP-JURI.md`](../docs/SOP-JURI.md)

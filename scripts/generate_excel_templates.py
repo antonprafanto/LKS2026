@@ -73,6 +73,143 @@ def sheet_modul_a(wb: Workbook) -> None:
     set_widths(ws, {1: 6, 2: 38, 3: 8, 4: 10, 5: 10, 6: 10, 7: 12, 8: 12, 9: 10, 10: 24})
 
 
+def _judgement_rows(ws, start: int, rows: list[tuple[str, str, float]]) -> int:
+    """Write judgement rows; return total row index."""
+    for idx, (code, name, mx) in enumerate(rows, start + 1):
+        r = idx
+        ws.cell(r, 1, code)
+        ws.cell(r, 2, name)
+        ws.cell(r, 3, mx)
+        ws.cell(r, 7, f'=IF(COUNT(D{r}:F{r})=0,"",AVERAGE(D{r}:F{r}))')
+        ws.cell(r, 8, f'=IF(G{r}="",0,G{r}*C{r}/3)')
+        ws.cell(r, 9, f'=IF(COUNT(D{r}:F{r})<2,"",MAX(D{r}:F{r})-MIN(D{r}:F{r}))')
+        for c in range(4, 7):
+            ws.cell(r, c).number_format = "0.0"
+    return start + 1 + len(rows)
+
+
+def sheet_modul_b(wb: Workbook) -> None:
+    ws = wb.create_sheet("Modul B")
+    ws["A1"] = "MODUL B — Jurnal / Laporan Teknis (10 poin: J 8 + M 2)"
+    ws.merge_cells("A1:K1")
+    ws["A1"].font = Font(bold=True, size=14)
+
+    ws["A3"], ws["C3"], ws["E3"], ws["G3"] = "Tim No:", "Nama Tim:", "Kontingen:", "Deadline:"
+    ws["A4"], ws["C4"] = "Juri 1:", "Juri 2:"
+    ws["E4"], ws["G4"] = "Juri 3:", "Tepat Waktu (1/0):"
+
+    headers = [
+        "Kode", "Aspek", "Tipe", "Max", "J1", "J2", "J3",
+        "Rata-rata", "Skor Akhir", "Selisih", "Catatan",
+    ]
+    start = 6
+    for i, h in enumerate(headers, 1):
+        ws.cell(start, i, h)
+    style_header_row(ws, start, len(headers))
+
+    j_rows = [
+        ("B-J1", "Kualitas Fabrikasi Rangka & Stabilitas", 1.5),
+        ("B-J2", "Manajemen Pengkabelan (Wiring)", 1.5),
+        ("B-J3", "Integrasi Sistem Penggerak", 1.5),
+        ("B-J4", "Kalibrasi Sensor & Aktuator", 1.5),
+        ("B-J5", "Optimasi Software-Hardware", 1.5),
+        ("B-J6", "Kelengkapan Dokumentasi", 0.5),
+    ]
+    for idx, (code, name, mx) in enumerate(j_rows, start + 1):
+        r = idx
+        ws.cell(r, 1, code)
+        ws.cell(r, 2, name)
+        ws.cell(r, 3, "J")
+        ws.cell(r, 4, mx)
+        ws.cell(r, 8, f'=IF(COUNT(E{r}:G{r})=0,"",AVERAGE(E{r}:G{r}))')
+        ws.cell(r, 9, f'=IF(H{r}="",0,H{r}*D{r}/3)')
+        ws.cell(r, 10, f'=IF(COUNT(E{r}:G{r})<2,"",MAX(E{r}:G{r})-MIN(E{r}:G{r}))')
+
+    j_total = start + 1 + len(j_rows)
+    ws.cell(j_total, 2, "SUBTOTAL JUDGEMENT")
+    ws.cell(j_total, 4, 8.0)
+    ws.cell(j_total, 9, f"=SUM(I{start+1}:I{j_total-1})")
+    ws.cell(j_total, 2).font = Font(bold=True)
+
+    m_row = j_total + 1
+    ws.cell(m_row, 1, "B-M1")
+    ws.cell(m_row, 2, "Ketepatan Mengumpulkan sesuai Waktu")
+    ws.cell(m_row, 3, "M")
+    ws.cell(m_row, 4, 2.0)
+    ws.cell(m_row, 9, f"=IF(G4=\"\",0,G4*D{m_row})")
+
+    total_row = m_row + 1
+    ws.cell(total_row, 2, "TOTAL MODUL B")
+    ws.cell(total_row, 4, 10.0)
+    ws.cell(total_row, 9, f"=I{j_total}+I{m_row}")
+    ws.cell(total_row, 2).font = Font(bold=True)
+
+    chk_start = total_row + 2
+    ws.cell(chk_start, 1, "CHECKLIST KELENGKAPAN (1=ada)")
+    ws.cell(chk_start, 1).font = Font(bold=True)
+    checklist = [
+        "Analisis Tugas & Strategi", "Desain Mekanik", "Diagram Blok", "Bill of Materials",
+        "Dokumentasi Fabrikasi", "Manajemen Kelistrikan", "Penempatan Sensor",
+        "Arsitektur Software", "Algoritma Navigasi", "Algoritma Visi", "Flowchart",
+        "Data Kalibrasi", "Tuning Kontroler", "Log Troubleshooting",
+    ]
+    for i, item in enumerate(checklist, chk_start + 1):
+        ws.cell(i, 1, f"C{i - chk_start}")
+        ws.cell(i, 2, item)
+        ws.cell(i, 3, "")
+
+    set_widths(ws, {1: 8, 2: 36, 3: 6, 4: 8, 5: 8, 6: 8, 7: 8, 8: 10, 9: 10, 10: 8, 11: 20})
+
+
+def sheet_modul_c(wb: Workbook) -> None:
+    ws = wb.create_sheet("Modul C")
+    ws["A1"] = "MODUL C — Pembuatan & Perakitan Robot (10 poin, Judgement)"
+    ws.merge_cells("A1:J1")
+    ws["A1"].font = Font(bold=True, size=14)
+
+    ws["A3"], ws["C3"], ws["E3"] = "Tim No:", "Nama Tim:", "Waktu Mulai:"
+    ws["G3"], ws["I3"] = "Waktu Selesai:", "Durasi (jam):"
+    ws["A4"], ws["C4"], ws["E4"] = "Juri 1:", "Juri 2:", "Juri 3:"
+
+    headers = [
+        "Sub", "Kriteria", "Max", "J1", "J2", "J3",
+        "Rata-rata", "Skor Akhir", "Selisih", "Catatan",
+    ]
+    start = 6
+    for i, h in enumerate(headers, 1):
+        ws.cell(start, i, h)
+    style_header_row(ws, start, len(headers))
+
+    rows = [
+        ("C1", "Perakitan L-Channel sebagai Penyangga Utama Lift", 2.5),
+        ("C2", "Integrasi Sistem Angkat / Gripper / Lifter", 2.5),
+        ("C3", "Kualitas Rewiring (rapi, aman)", 2.5),
+        ("C4", "Kelayakan Operasional (STOP, struktur stabil)", 2.5),
+    ]
+    total_row = _judgement_rows(ws, start, rows)
+    ws.cell(total_row, 2, "TOTAL MODUL C")
+    ws.cell(total_row, 3, 10.0)
+    ws.cell(total_row, 8, f"=SUM(H{start+1}:H{total_row-1})")
+    ws.cell(total_row, 2).font = Font(bold=True)
+
+    chk = total_row + 2
+    ws.cell(chk, 1, "CHECKLIST INSPEKSI (1=Lulus 0=Tidak)")
+    ws.cell(chk, 1).font = Font(bold=True)
+    items = [
+        "L-Channel sebagai penyangga utama angkat",
+        "Sistem objek terpasang kuat di L-Channel",
+        "Tidak ada kabel terbuka/terjepit",
+        "Tombol STOP merah berfungsi",
+        "Selesai dalam batas 2 jam",
+        "Robot aman dioperasikan (K3)",
+    ]
+    for i, item in enumerate(items, chk + 1):
+        ws.cell(i, 1, f"I{i-chk}")
+        ws.cell(i, 2, item)
+
+    set_widths(ws, {1: 6, 2: 42, 3: 8, 4: 8, 5: 8, 6: 8, 7: 10, 8: 10, 9: 8, 10: 22})
+
+
 def sheet_modul_d(wb: Workbook) -> None:
     ws = wb.create_sheet("Modul D")
     ws["A1"] = "MODUL D — Gerakan Dasar & Manajemen Objek (12 poin, Measurement)"
@@ -180,8 +317,8 @@ def sheet_rekap(wb: Workbook) -> None:
 
     data = [
         ("A", "Organisasi & Manajemen Kerja", 8, "=\'Modul A\'!H11", "J"),
-        ("B", "Jurnal Teknis", 10, 0, "J+M"),
-        ("C", "Perakitan Robot", 10, 0, "J"),
+        ("B", "Jurnal Teknis", 10, "=\'Modul B\'!I15", "J+M"),
+        ("C", "Perakitan Robot", 10, "=\'Modul C\'!H11", "J"),
         ("D", "Gerakan Dasar", 12, "=\'Modul D\'!F21", "M"),
         ("E", "Performa Otonom", 60, "=\'Modul E\'!J16", "M"),
     ]
@@ -217,13 +354,14 @@ def sheet_panduan(wb: Workbook) -> None:
     lines = [
         "",
         "1. Isi header (Tim No, Nama, Juri) di setiap sheet modul.",
-        "2. Modul A: isi skor Juri 1-3 (0-3). Rata-rata & Skor Akhir otomatis.",
-        "3. Modul D/E: isi Hasil dengan 1 (berhasil) atau 0 (gagal). Skor otomatis.",
-        "4. Modul E: isi posisi kubus dari lembar Undian / skenario soal.",
-        "5. Sheet Rekapitulasi menarik total dari Modul A, D, E (B & C isi manual).",
-        "6. Skor resmi tetap diinput ke CIS sesuai Marking Scheme Chief Expert.",
+        "2. Modul A/B/C: isi skor Juri 1-3 (0-3). Rata-rata & Skor Akhir otomatis.",
+        "3. Modul B: isi Tepat Waktu (1/0) di G4 — skor B-M1 otomatis.",
+        "4. Modul D/E: isi Hasil dengan 1 (berhasil) atau 0 (gagal). Skor otomatis.",
+        "5. Modul E: isi posisi kubus dari lembar Undian / skenario soal.",
+        "6. Sheet Rekapitulasi menarik total dari Modul A–E.",
+        "7. Skor resmi tetap diinput ke CIS sesuai Marking Scheme Chief Expert.",
         "",
-        "Acuan: docs/SOP-JURI.md | Skenario latihan: docs/SKENARIO-SOAL-CONTOH.md",
+        "Acuan: docs/SOP-JURI.md | Briefing: docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx",
     ]
     for i, line in enumerate(lines, 2):
         ws.cell(i, 1, line)
@@ -234,6 +372,8 @@ def main() -> None:
     wb = Workbook()
     sheet_panduan(wb)
     sheet_modul_a(wb)
+    sheet_modul_b(wb)
+    sheet_modul_c(wb)
     sheet_modul_d(wb)
     sheet_modul_e(wb)
     sheet_rekap(wb)

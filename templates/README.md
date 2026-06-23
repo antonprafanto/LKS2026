@@ -6,7 +6,7 @@ Buka file `.csv` dengan **Excel** atau **Google Sheets** (Import → Replace dat
 
 | File | Modul | Hari | Metode |
 |------|-------|------|--------|
-| **`LKS2026-Penilaian-Juri.xlsx`** | A, D, E + Rekap | Semua | **Excel + rumus otomatis** |
+| **`LKS2026-Penilaian-Juri.xlsx`** | A, B, C, D, E + Rekap | Semua | **Excel + rumus otomatis** |
 | `modul-a-organisasi.csv` | A — Organisasi & Manajemen Kerja | H1–H3 | Judgement |
 | `modul-b-jurnal.csv` | B — Jurnal Teknis | H1 | J + M |
 | `modul-c-perakitan.csv` | C — Perakitan Robot | H1 | Judgement |

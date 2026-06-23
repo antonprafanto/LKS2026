@@ -7,6 +7,7 @@ Repositori pendukung juri **LKS Pendidikan Menengah Tingkat Nasional XXXIV 2026*
 | Folder / File | Deskripsi |
 |---------------|-----------|
 | [`docs/SOP-JURI.md`](docs/SOP-JURI.md) | Standard Operating Procedure penilaian untuk juri |
+| [`docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx`](docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx) | Slide briefing juri (PowerPoint, ~20 slide) |
 | [`templates/`](templates/) | Lembar penilaian siap pakai (CSV + **Excel dengan rumus**) |
 | [`docs/SKENARIO-SOAL-CONTOH.md`](docs/SKENARIO-SOAL-CONTOH.md) | Skenario latihan juri (undian, run, kunci penilaian) |
 | `Kisi-kisi_page_*.png` | Kisi-kisi resmi bidang lomba |
@@ -30,7 +31,8 @@ Repositori pendukung juri **LKS Pendidikan Menengah Tingkat Nasional XXXIV 2026*
 
 ## Cara Pakai Template
 
-1. **Excel (disarankan):** buka [`templates/LKS2026-Penilaian-Juri.xlsx`](templates/LKS2026-Penilaian-Juri.xlsx) — skor Modul A/D/E terhitung otomatis.
+1. **Briefing:** presentasikan `docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx` saat Technical Meeting.
+2. **Excel (disarankan):** buka [`templates/LKS2026-Penilaian-Juri.xlsx`](templates/LKS2026-Penilaian-Juri.xlsx) — sheet Modul A–E + Rekapitulasi dengan rumus otomatis.
 2. **CSV:** buka file di `templates/` dengan Excel atau Google Sheets.
 3. **Latihan juri:** kerjakan [`docs/SKENARIO-SOAL-CONTOH.md`](../docs/SKENARIO-SOAL-CONTOH.md).
 4. Ikuti alur di `docs/SOP-JURI.md` per hari lomba.

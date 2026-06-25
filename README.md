@@ -25,6 +25,7 @@ Repositori pendukung juri **LKS Pendidikan Menengah Tingkat Nasional XXXIV 2026*
 | [`templates/LKS2026-Penilaian-Juri.xlsx`](templates/LKS2026-Penilaian-Juri.xlsx) | Tanpa macro (fallback) — durasi otomatis, waktu manual |
 | [`templates/LKS2026-Penilaian-Juri-CONTOH.xlsx`](templates/LKS2026-Penilaian-Juri-CONTOH.xlsx) | **File latihan** — contoh sudah terisi |
 | [`templates/LKS2026-Penilaian-Juri-CONTOH.xlsm`](templates/LKS2026-Penilaian-Juri-CONTOH.xlsm) | File latihan + stopwatch |
+| [`templates/LKS2026-Penilaian-Juri TIM SMK Muhammadiyah.xlsm`](templates/LKS2026-Penilaian-Juri%20TIM%20SMK%20Muhammadiyah.xlsm) | **Job tetap** — Modul E manual (latihan internal) |
 | [`docs/CONTOH-EXCEL-MODUL-E.md`](docs/CONTOH-EXCEL-MODUL-E.md) | Contoh angka pengisian Excel Modul E |
 | [`docs/SKENARIO-SOAL-CONTOH.md`](docs/SKENARIO-SOAL-CONTOH.md) | Skenario latihan juri (undian, run, kunci penilaian) |
 | [`assets/`](assets/) | Logo Kemendikdasmen & LKS untuk briefing |

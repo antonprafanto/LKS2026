@@ -13,6 +13,7 @@ Daftar dokumen bantuan untuk juri. **Mulai dari sini** jika bingung cara pakai E
 | [CONTOH-EXCEL-MODUL-E.md](CONTOH-EXCEL-MODUL-E.md) | Contoh angka pengisian Excel | Latihan H-1 |
 | [SKENARIO-SOAL-CONTOH.md](SKENARIO-SOAL-CONTOH.md) | Skenario latihan full (Run 1 + RETRY) | Latihan H-1 |
 | **[PANDUAN-GOOGLE-SHEETS.md](PANDUAN-GOOGLE-SHEETS.md)** | Stopwatch di Google Sheets (Apps Script) | Jika tidak pakai Excel |
+| **[PANDUAN-JOB-MUHAMMADIYAH.md](PANDUAN-JOB-MUHAMMADIYAH.md)** | Job tetap SMK Muhammadiyah (Modul E manual) | Latihan internal |
 
 ---
 

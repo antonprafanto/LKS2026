@@ -21,6 +21,7 @@ SOP ini mengatur peran juri dalam penilaian **5 modul** (A–E) selama 3 hari lo
 | Acuan | Kisi-kisi & Deskripsi Teknis — [Puspresnas](https://smk.pusatprestasinasional.kemdikdasmen.go.id) |
 | Briefing | `docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx` |
 | Latihan | `templates/LKS2026-Penilaian-Juri-CONTOH.xlsx` + `docs/SKENARIO-SOAL-CONTOH.md` |
+| Google Sheets | `docs/PANDUAN-GOOGLE-SHEETS.md` (stopwatch pakai Apps Script) |
 
 > **Jangan pakai file CSV** di folder `templates/` — gunakan workbook Excel saja.
 

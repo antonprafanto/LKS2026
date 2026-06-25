@@ -12,6 +12,7 @@ import generate_excel_templates as gen
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE = ROOT / "templates" / "LKS2026-Penilaian-Juri.xlsx"
 OUT = ROOT / "templates" / "LKS2026-Penilaian-Juri-CONTOH.xlsx"
+OUT_XLSM = OUT.with_suffix(".xlsm")
 
 # Marker baris 24 — sesuai skenario latihan (Rak1:M,H,B | Rak2:B,M,H | Rak3:H,B,M)
 MARKERS = ["Merah", "Hijau", "Biru", "Biru", "Merah", "Hijau", "Hijau", "Biru", "Merah"]
@@ -92,6 +93,9 @@ def fill_example(wb_path: Path) -> None:
     log["B3"] = "05"
     log["E7"] = "RUN-01"
     log["H7"] = "Trial"
+    log["B8"] = "08:40:00"
+    log["E8"] = "08:42:00"
+    log["H8"] = "08:55:00"
 
     wb.save(wb_path)
     wb.close()
@@ -103,7 +107,16 @@ def main() -> None:
     shutil.copy2(TEMPLATE, OUT)
     fill_example(OUT)
     print(f"Created example workbook: {OUT}")
-    print("Buka file ini di Excel — lihat sheet Undian Kubus lalu Modul E.")
+
+    try:
+        from add_log_run_stopwatch import apply_stopwatch
+
+        apply_stopwatch(OUT, OUT_XLSM)
+        print(f"Created example workbook: {OUT_XLSM} (stopwatch)")
+    except Exception as exc:
+        print(f"WARN: CONTOH .xlsm not created — {exc}")
+
+    print("Buka file .xlsm di Excel - sheet Log Run Otonom - tombol stopwatch.")
 
 
 if __name__ == "__main__":

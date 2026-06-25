@@ -21,8 +21,10 @@ Repositori pendukung juri **LKS Pendidikan Menengah Tingkat Nasional XXXIV 2026*
 | [`docs/PANDUAN-LOG-RUN.md`](docs/PANDUAN-LOG-RUN.md) | **Panduan runut Log Run** — checklist 8 langkah, kronologi, contoh timeline |
 | [`docs/SOP-JURI.md`](docs/SOP-JURI.md) | Standard Operating Procedure penilaian untuk juri |
 | [`docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx`](docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx) | Slide briefing juri branded Kemendikdasmen/LKS + demo Modul E |
-| [`templates/LKS2026-Penilaian-Juri.xlsx`](templates/LKS2026-Penilaian-Juri.xlsx) | **File utama** — Modul A–E, Undian Kubus, Log Run, Rekapitulasi |
-| [`templates/LKS2026-Penilaian-Juri-CONTOH.xlsx`](templates/LKS2026-Penilaian-Juri-CONTOH.xlsx) | **File latihan** — contoh sudah terisi (buka ini dulu) |
+| [`templates/LKS2026-Penilaian-Juri.xlsm`](templates/LKS2026-Penilaian-Juri.xlsm) | **File utama (disarankan)** — stopwatch Log Run + macro |
+| [`templates/LKS2026-Penilaian-Juri.xlsx`](templates/LKS2026-Penilaian-Juri.xlsx) | Tanpa macro (fallback) — durasi otomatis, waktu manual |
+| [`templates/LKS2026-Penilaian-Juri-CONTOH.xlsx`](templates/LKS2026-Penilaian-Juri-CONTOH.xlsx) | **File latihan** — contoh sudah terisi |
+| [`templates/LKS2026-Penilaian-Juri-CONTOH.xlsm`](templates/LKS2026-Penilaian-Juri-CONTOH.xlsm) | File latihan + stopwatch |
 | [`docs/CONTOH-EXCEL-MODUL-E.md`](docs/CONTOH-EXCEL-MODUL-E.md) | Contoh angka pengisian Excel Modul E |
 | [`docs/SKENARIO-SOAL-CONTOH.md`](docs/SKENARIO-SOAL-CONTOH.md) | Skenario latihan juri (undian, run, kunci penilaian) |
 | [`assets/`](assets/) | Logo Kemendikdasmen & LKS untuk briefing |
@@ -47,7 +49,7 @@ Repositori pendukung juri **LKS Pendidikan Menengah Tingkat Nasional XXXIV 2026*
 
 1. **Briefing:** presentasikan `docs/Briefing-Juri-LKS2026-Robot-Otonom.pptx` saat Technical Meeting.
 2. **Latihan:** buka [`LKS2026-Penilaian-Juri-CONTOH.xlsx`](templates/LKS2026-Penilaian-Juri-CONTOH.xlsx) + [`PANDUAN-MODUL-E.md`](docs/PANDUAN-MODUL-E.md) + [`PANDUAN-LOG-RUN.md`](docs/PANDUAN-LOG-RUN.md).
-3. **Excel lomba:** duplikat `LKS2026-Penilaian-Juri.xlsx` per tim — isi Undian Kubus dulu, lalu Modul E.
+3. **Excel lomba:** duplikat **`LKS2026-Penilaian-Juri.xlsm`** per tim — Enable Macro → Log Run pakai tombol stopwatch.
 4. **Latihan skenario:** [`SKENARIO-SOAL-CONTOH.md`](docs/SKENARIO-SOAL-CONTOH.md).
 5. Ikuti alur di `docs/SOP-JURI.md` per hari lomba.
 6. Input skor akhir ke **CIS** (butuh Microsoft Excel 2010+).

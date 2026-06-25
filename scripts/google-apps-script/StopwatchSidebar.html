@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top" />
+    <style>
+      body { font-family: Arial, sans-serif; padding: 12px; text-align: center; }
+      #clock { font-size: 36px; font-weight: bold; color: #c00000; margin: 16px 0; }
+      .hint { font-size: 12px; color: #555; line-height: 1.4; }
+      button {
+        display: block; width: 100%; margin: 6px 0; padding: 10px;
+        font-size: 14px; cursor: pointer; border: none; border-radius: 4px;
+      }
+      .siap { background: #fff2cc; }
+      .start { background: #d9ead3; }
+      .selesai { background: #fce5cd; }
+      .reset { background: #eeeeee; }
+    </style>
+  </head>
+  <body>
+    <div class="hint">Stopwatch live (update tiap detik)</div>
+    <div id="clock">00:00:00</div>
+    <button class="siap" onclick="run('catatSIAP')">&#9654; SIAP</button>
+    <button class="start" onclick="run('catatSTART')">&#9654; START</button>
+    <button class="selesai" onclick="run('catatSELESAI')">&#9632; SELESAI</button>
+    <button class="reset" onclick="run('resetWaktuRun')">&#8634; Reset</button>
+    <p class="hint">Waktu tersimpan di sel B8, E8, H8 sheet Log Run Otonom.</p>
+    <script>
+      function tick() {
+        google.script.run.withSuccessHandler(function (state) {
+          document.getElementById('clock').textContent = state.display;
+        }).getStopwatchState();
+      }
+      function run(fn) {
+        google.script.run.withSuccessHandler(tick)[fn]();
+      }
+      tick();
+      setInterval(tick, 1000);
+    </script>
+  </body>
+</html>

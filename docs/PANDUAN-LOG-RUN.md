@@ -222,4 +222,47 @@ Ulangi checklist 1–8 dari awal. Modul E diisi ulang Hasil Run untuk run retry 
 
 ---
 
+## Bagian 12 — Stopwatch di Log Run
+
+Panel **STOPWATCH RUN** ada di kolom J–K (kanan, baris 6–10).
+
+### Mode A — .xlsx (tanpa macro, langsung jalan)
+
+| Langkah | Cara |
+|---------|------|
+| Catat SIAP | Klik sel **B8** → tekan **`Ctrl+Shift+:`** |
+| Catat START | Klik sel **E8** → **`Ctrl+Shift+:`** |
+| Durasi saat run | Lihat **Durasi live (F9)** kolom K7 — tekan **F9** untuk refresh |
+| Catat SELESAI | Klik sel **H8** → **`Ctrl+Shift+:`** |
+| Durasi final | Kolom **K8** (jam) dan **K9** (menit) otomatis |
+
+### Mode B — .xlsm (tombol satu klik, disarankan)
+
+1. Buka **`LKS2026-Penilaian-Juri.xlsm`** → **Enable Macro**.
+2. Klik **▶ SIAP** → **▶ START** → **■ SELESAI** (waktu tercatat otomatis).
+3. **Durasi live** (K7) berjalan sendiri setelah START (tanpa F9).
+4. **↺ Reset** untuk run baru.
+
+File `.xlsm` dibuat dengan `python scripts/add_log_run_stopwatch.py` (sekali, di laptop CE).
+
+### Buat file .xlsm (Chief Expert / panitia)
+
+1. Tutup file Excel penilaian.
+2. Excel → **File → Options → Trust Center → Trust Center Settings → Macro Settings** → centang **Trust access to the VBA project object model**.
+3. Jalankan: `python scripts/generate_excel_templates.py`
+4. Bagikan **`LKS2026-Penilaian-Juri.xlsm`** ke juri.
+
+Alternatif: import modul [`templates/vba/LogRunStopwatch.bas`](../templates/vba/LogRunStopwatch.bas) lewat Alt+F11 → File → Import.
+
+### Troubleshooting stopwatch
+
+| Masalah | Solusi |
+|---------|--------|
+| Durasi live tidak berubah (.xlsx) | Tekan **F9** saat run berjalan |
+| Tombol tidak ada | Pakai **.xlsm** atau Mode A (Ctrl+Shift+:) |
+| Script .xlsm gagal | Tutup Excel + izinkan akses VBA project (Trust Center) |
+| Waktu START di Modul E kosong | Isi START di Log Run E8 — Modul E D4 tarik otomatis |
+
+---
+
 *Panduan ini untuk juri LKS Nasional 2026 — Robot Bergerak Otonom. Acuan resmi: SOP-JURI.md + Marking Scheme CIS.*

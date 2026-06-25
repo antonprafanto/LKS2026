@@ -8,6 +8,7 @@ from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 OUT = Path(__file__).resolve().parent.parent / "templates" / "LKS2026-Penilaian-Juri.xlsx"
+OUT_XLSM = OUT.with_suffix(".xlsm")
 
 GITHUB_REPO = "https://github.com/antonprafanto/LKS2026"
 GITHUB_SOP = f"{GITHUB_REPO}/blob/main/docs/SOP-JURI.md"
@@ -373,6 +374,44 @@ def sheet_log_run(wb: Workbook) -> None:
         ws[label_cell] = label
         ws[label_cell].font = Font(bold=True)
 
+    # --- Stopwatch panel (kanan) — tombol macro di file .xlsm ---
+    sw_fill = PatternFill("solid", fgColor="E8F4FC")
+    ws.merge_cells("J6:L6")
+    sw_title = ws.cell(6, 10, "STOPWATCH RUN — klik tombol di bawah (file .xlsm, Enable Macro)")
+    sw_title.font = Font(bold=True, size=11, color="1F4E79")
+    sw_title.fill = sw_fill
+    sw_title.alignment = Alignment(wrap_text=True, vertical="center")
+    ws.row_dimensions[6].height = 28
+
+    ws["J7"] = "Durasi live (F9):"
+    ws["J7"].font = Font(bold=True)
+    ws["K7"].fill = PatternFill("solid", fgColor="FFFFFF")
+    ws["K7"].font = Font(bold=True, size=14, color="C00000")
+    ws["K7"].alignment = Alignment(horizontal="center")
+    ws["K7"].number_format = "[h]:mm:ss"
+    ws["K7"] = '=IF(E8="","",IF(H8<>"",H8-E8,NOW()-TODAY()-E8))'
+
+    ws["J8"] = "Durasi final:"
+    ws["J8"].font = Font(bold=True)
+    ws["K8"] = '=IF(AND(E8<>"",H8<>""),H8-E8,"")'
+    ws["K8"].number_format = "[h]:mm:ss"
+    ws["K8"].fill = sw_fill
+
+    ws["J9"] = "Menit:"
+    ws["J9"].font = Font(bold=True)
+    ws["K9"] = '=IF(K8="","",ROUND(K8*24*60,1))'
+    ws["K9"].number_format = "0.0"
+    ws["K9"].fill = sw_fill
+
+    ws.merge_cells("J10:L10")
+    hint = ws.cell(10, 10, (
+        "Tanpa macro (.xlsx): Ctrl+Shift+: untuk waktu | tekan F9 saat run untuk refresh durasi live. "
+        "Disarankan .xlsm + tombol ▶ SIAP ▶ START ■ SELESAI (Enable Macro)."
+    ))
+    hint.font = Font(italic=True, size=9, color="404040")
+    hint.alignment = Alignment(wrap_text=True)
+    ws.row_dimensions[10].height = 30
+
     ws["A11"] = "CHECKLIST PROSEDUR JURI (isi 1 = selesai)"
     ws["A11"].font = Font(bold=True)
     checks = [
@@ -436,7 +475,7 @@ def sheet_log_run(wb: Workbook) -> None:
     ws.cell(sig, 4, "Tanda tangan Peserta:")
     ws.cell(sig, 7, "Tanda tangan Chief Expert:")
 
-    set_widths(ws, {1: 28, 2: 14, 3: 14, 4: 14, 5: 14, 6: 14, 7: 18, 8: 14})
+    set_widths(ws, {1: 28, 2: 14, 3: 14, 4: 14, 5: 14, 6: 14, 7: 18, 8: 14, 10: 12, 11: 14, 12: 14})
 
 
 def sheet_modul_a(wb: Workbook) -> None:
@@ -707,6 +746,8 @@ def sheet_modul_e(wb: Workbook) -> None:
 
     ws["A3"], ws["C3"], ws["E3"], ws["G3"] = "Tim No:", "Run ID:", "Hari:", "Trial/Final:"
     ws["A4"], ws["C4"] = "Arena No:", "Waktu START:"
+    ws["D4"] = "='Log Run Otonom'!E8"
+    ws["D4"].number_format = "hh:mm:ss"
     ws.merge_cells("A5:K5")
     ws["A5"] = (
         "PETUNJUK: Isi sheet Undian Kubus dulu — baris 24 (warna marker, baris kuning), "
@@ -843,6 +884,7 @@ def sheet_panduan(wb: Workbook) -> None:
         "LATIHAN: buka LKS2026-Penilaian-Juri-CONTOH.xlsx untuk melihat contoh terisi.",
         "",
         "1. Duplikat workbook ini per TIM (Save As).",
+        "   Disarankan: LKS2026-Penilaian-Juri.xlsm (stopwatch Log Run — Enable Macro).",
         "2. Modul A/B/C: isi skor Juri 1-3 (0-3). Skor otomatis.",
         "3. Modul B: isi Tepat Waktu (1/0) di G4.",
         "4. UNDIAN KUBUS (isi DULU sebelum Modul E):",
@@ -850,7 +892,7 @@ def sheet_panduan(wb: Workbook) -> None:
         "   b. Baris 28–36: kolom A = ID kubus | E = Rak/Stand | F = Slot.",
         "5. MODUL E: kolom B-G otomatis. Juri isi kolom H (Hasil Run 1/0) saja.",
         "   OK Awal = posisi sudah benar sebelum run | Hasil Run = sukses setelah run.",
-        "6. Log Run Otonom: checklist SIAP/START + kronologi.",
+        "6. Log Run Otonom: tombol stopwatch SIAP/START/SELESAI (.xlsm) + checklist.",
         "7. Rekapitulasi: total otomatis. Input ke CIS (Chief Expert).",
         "",
         "Sheet: Panduan | Modul A-E | Undian Kubus | Log Run | Rekapitulasi",
@@ -873,8 +915,26 @@ def main() -> None:
     sheet_log_run(wb)
     sheet_rekap(wb)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    wb.save(OUT)
-    print(f"Created: {OUT}")
+    tmp = OUT.with_name("_tmp_build.xlsx")
+    wb.save(tmp)
+    try:
+        tmp.replace(OUT)
+        print(f"Created: {OUT}")
+    except PermissionError:
+        print(f"WARN: {OUT.name} sedang dibuka — simpan ke {tmp.name}")
+        print(f"Created: {tmp}")
+
+    xlsx_for_macro = OUT if OUT.exists() else tmp
+    try:
+        from add_log_run_stopwatch import apply_stopwatch
+
+        apply_stopwatch(xlsx_for_macro, OUT_XLSM)
+        print(f"Created: {OUT_XLSM} (stopwatch + tombol macro)")
+    except Exception as exc:
+        print(f"WARN: .xlsm tidak dibuat — {exc}")
+        print("  Durasi otomatis tetap ada di .xlsx (Ctrl+Shift+: + F9).")
+        print("  Untuk tombol: Excel > Trust Center > izinkan akses VBA project,")
+        print("  lalu: python scripts/add_log_run_stopwatch.py")
 
 
 if __name__ == "__main__":

@@ -272,7 +272,18 @@ function pad_(n) {
   return (n < 10 ? '0' : '') + n;
 }
 
-/** Tes: Run dari Script Editor — harus muncul popup "Script OK" */
+/** Tes jam WITA — Run di Script Editor, harus ~09:xx bukan 01:xx */
+function testJamWITA() {
+  ensureTimezone_();
+  var t = Utilities.formatDate(new Date(), TIMEZONE, 'HH:mm:ss');
+  SpreadsheetApp.getUi().alert(
+    'Jam WITA sekarang: ' + t + '\n' +
+    'Timezone: ' + TIMEZONE + '\n\n' +
+    'Jika benar (~09:xx), Reset waktu lalu klik SIAP lagi.'
+  );
+}
+
+/** Tes koneksi sheet Log Run Otonom */
 function testScriptOK() {
   getLogSheet_();
   SpreadsheetApp.getUi().alert('Script OK — sheet Log Run Otonom ditemukan.');

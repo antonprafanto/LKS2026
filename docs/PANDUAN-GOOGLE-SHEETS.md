@@ -87,6 +87,10 @@ Google Sheets default sering **UTC**. Samarinda pakai **WITA (UTC+8)**.
 
 > Durasi di **K7/K8** tetap benar meski timezone salah — hanya **jam tampilan** B8/E8/H8 yang melenceng.
 
+### K7 tampil 96000:00:00?
+
+Script lama menimpa sel K7 dengan angka salah. **Perbaikan:** paste script terbaru → **Reset waktu** → **setupLogRunSheet** → run lagi. K7/K8 pakai **rumus saja** (harus `0:00:04` bukan 96000 jam).
+
 ---
 
 ## Menu tidak muncul? Checklist

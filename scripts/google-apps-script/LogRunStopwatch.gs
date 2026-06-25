@@ -59,13 +59,9 @@ function setupLogRunSheet() {
 
   var sheet = getLogSheet_();
 
-  sheet.getRange('K7').setFormula('=IF(E8="","",IF(H8<>"",H8-E8,JAM_WITA()-E8))');
-  sheet.getRange('K8').setFormula('=IF(AND(E8<>"",H8<>""),H8-E8,"")');
-  sheet.getRange('K9').setFormula('=IF(K8="","",ROUND(K8*24*60,1))');
-  sheet.getRange('K7:K8').setNumberFormat('[h]:mm:ss');
-  sheet.getRange('K9').setNumberFormat('0.0');
+  restoreDurationFormulas_(sheet);
 
-  sheet.getRange('J7').setValue('Durasi run (dari 0):');
+  sheet.getRange('J7').setValue('Durasi run (live):');
   sheet.getRange('J8').setValue('Durasi final:');
   sheet.getRange('J9').setValue('Menit:');
 
@@ -128,15 +124,34 @@ function JAM_WITA() {
   return witaTimeFraction_();
 }
 
+function restoreDurationFormulas_(sheet) {
+  // K7/K8/K8 hanya rumus — jangan setValue manual (bisa jadi 96000:00:00)
+  sheet.getRange('K7').setFormula(
+    '=IF(E8="","",IF(H8<>"",H8-E8,IF(AND(E8>0,E8<1),JAM_WITA()-E8,"")))'
+  );
+  sheet.getRange('K8').setFormula('=IF(AND(E8<>"",H8<>""),H8-E8,"")');
+  sheet.getRange('K9').setFormula('=IF(K8="","",ROUND(K8*24*60,1))');
+  sheet.getRange('K7:K8').setNumberFormat('[h]:mm:ss');
+  sheet.getRange('K9').setNumberFormat('0.0');
+}
+
 function durationBetween_(start, end) {
   if (start === '' || start === null || end === '' || end === null) {
     return null;
   }
-  var dur = Number(end) - Number(start);
-  if (dur < 0) {
-    dur += 1;
+  if (start instanceof Date && end instanceof Date) {
+    return Math.max(0, end.getTime() - start.getTime()) / 86400000;
   }
-  return dur;
+  var s = Number(start);
+  var e = Number(end);
+  if (s > 0 && s < 1 && e > 0 && e < 1) {
+    var dur = e - s;
+    if (dur < 0) {
+      dur += 1;
+    }
+    return dur;
+  }
+  return null;
 }
 
 function safeMerge_(sheet, a1) {
@@ -178,16 +193,14 @@ function catatSTART() {
     'lks_stopwatch_start',
     String(new Date().getTime())
   );
-  sheet.getRange(CELL_LIVE).setValue(0).setNumberFormat('[h]:mm:ss');
-  SpreadsheetApp.getActive().toast('START — buka sidebar untuk timer live', MENU_NAME, 4);
+  SpreadsheetApp.getActive().toast('START — durasi live di K7 / sidebar', MENU_NAME, 4);
 }
 
 function catatSELESAI() {
   var sheet = getLogSheet_();
   stampNow_(sheet, CELL_SELESAI);
   PropertiesService.getDocumentProperties().deleteProperty('lks_stopwatch_start');
-  updateLiveDuration_(sheet);
-  SpreadsheetApp.getActive().toast('SELESAI — lihat durasi di K8/K9', MENU_NAME, 3);
+  SpreadsheetApp.getActive().toast('SELESAI — lihat durasi di K7/K8', MENU_NAME, 3);
 }
 
 function resetWaktuRun() {
@@ -195,19 +208,9 @@ function resetWaktuRun() {
   sheet.getRange(CELL_SIAP).clearContent();
   sheet.getRange(CELL_START).clearContent();
   sheet.getRange(CELL_SELESAI).clearContent();
-  sheet.getRange(CELL_LIVE).clearContent();
+  restoreDurationFormulas_(sheet);
   PropertiesService.getDocumentProperties().deleteProperty('lks_stopwatch_start');
   SpreadsheetApp.getActive().toast('Waktu direset', MENU_NAME, 3);
-}
-
-function updateLiveDuration_(sheet) {
-  var dur = durationBetween_(
-    sheet.getRange(CELL_START).getValue(),
-    sheet.getRange(CELL_SELESAI).getValue()
-  );
-  if (dur !== null) {
-    sheet.getRange(CELL_LIVE).setValue(dur).setNumberFormat('[h]:mm:ss');
-  }
 }
 
 function showStopwatchSidebar() {

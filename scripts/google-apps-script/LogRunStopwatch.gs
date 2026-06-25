@@ -15,6 +15,8 @@ var CELL_START = 'E8';
 var CELL_SELESAI = 'H8';
 var CELL_LIVE = 'K7';
 var MENU_NAME = 'LKS Stopwatch';
+/** WITA — Samarinda, Banjarmasin, Makassar (UTC+8). Ganti jika lomba di WIB/WIT. */
+var TIMEZONE = 'Asia/Makassar';
 
 function onOpen() {
   try {

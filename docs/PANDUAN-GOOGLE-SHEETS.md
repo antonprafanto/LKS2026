@@ -69,6 +69,26 @@ Yang **dari 0** hanya **kolom K** (durasi START → SELESAI). Jam SIAP sengaja j
 
 ---
 
+## Jam SIAP tampil 01:16 padahal sekarang 09:18? (timezone)
+
+Google Sheets default sering **UTC**. Samarinda pakai **WITA (UTC+8)**.
+
+| Yang Anda lihat | Penyebab |
+|-----------------|----------|
+| `01:16` di B8 | Waktu **UTC** (bukan jam Samarinda) |
+| Sekarang `09:18` Samarinda | = `01:18` UTC → selisih **8 jam** |
+
+**Perbaikan:**
+
+1. Spreadsheet → **File → Settings** → **Time zone** → **`(GMT+08:00) Asia/Makassar`** (WITA)  
+2. Apps Script → Run **`setupLogRunSheet`** (script terbaru set timezone otomatis)  
+3. Menu **LKS Stopwatch → Reset waktu**  
+4. Klik **SIAP / START / SELESAI** lagi → harus tampil **~09:18**, bukan 01:18  
+
+> Durasi di **K7/K8** tetap benar meski timezone salah — hanya **jam tampilan** B8/E8/H8 yang melenceng.
+
+---
+
 ## Menu tidak muncul? Checklist
 
 | # | Cek | Solusi |

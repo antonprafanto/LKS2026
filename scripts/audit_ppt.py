@@ -59,6 +59,10 @@ def main() -> int:
         bug("Masih menyebut bobot 6,67 (seharusnya 60/9 di Excel)")
     if "lembar-undian-kubus.csv" in corpus:
         bug("Referensi lembar-undian-kubus.csv usang")
+    if "baris 22" not in corpus.lower():
+        warn("PPT belum menjelaskan isian marker baris 22")
+    if "CONTOH" not in corpus:
+        warn("PPT belum menyebut file LKS2026-Penilaian-Juri-CONTOH.xlsx")
 
     if len(prs.slides) < 18:
         warn(f"Hanya {len(prs.slides)} slide — mungkin kurang lengkap")

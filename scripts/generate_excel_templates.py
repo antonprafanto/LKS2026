@@ -3,10 +3,30 @@
 from pathlib import Path
 
 from openpyxl import Workbook
+from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 OUT = Path(__file__).resolve().parent.parent / "templates" / "LKS2026-Penilaian-Juri.xlsx"
+
+GITHUB_REPO = "https://github.com/antonprafanto/LKS2026"
+GITHUB_SOP = f"{GITHUB_REPO}/blob/main/docs/SOP-JURI.md"
+GITHUB_PANDUAN_MODUL_E = f"{GITHUB_REPO}/blob/main/docs/PANDUAN-MODUL-E.md"
+GITHUB_PANDUAN_LOG_RUN = f"{GITHUB_REPO}/blob/main/docs/PANDUAN-LOG-RUN.md"
+GITHUB_CONTOH_MODUL_E = f"{GITHUB_REPO}/blob/main/docs/CONTOH-EXCEL-MODUL-E.md"
+
+# Anchor GitHub mengikuti heading di docs/SOP-JURI.md
+SOP_LINKS = {
+    "panduan": f"{GITHUB_REPO}/blob/main/docs/README.md",
+    "modul_a": f"{GITHUB_SOP}#5-sop-penilaian-modul-a--organisasi--manajemen-kerja-8-poin-j",
+    "modul_b": f"{GITHUB_SOP}#6-sop-penilaian-modul-b--jurnal-teknis-10-poin-j-8--m-2",
+    "modul_c": f"{GITHUB_SOP}#7-sop-penilaian-modul-c--perakitan-robot-10-poin-j",
+    "modul_d": f"{GITHUB_SOP}#8-sop-penilaian-modul-d--gerakan-dasar-12-poin-m",
+    "modul_e": GITHUB_PANDUAN_MODUL_E,
+    "undian": f"{GITHUB_SOP}#10-sop-pengacakan-kubus",
+    "log_run": GITHUB_PANDUAN_LOG_RUN,
+    "rekap": f"{GITHUB_SOP}#12-rekapitulasi--cis",
+}
 
 HEADER_FILL = PatternFill("solid", fgColor="1F4E79")
 HEADER_FONT = Font(color="FFFFFF", bold=True)
@@ -27,20 +47,129 @@ CATALOG = [
 ]
 
 MARKER_LABELS = [
-    "R1-S1 (kiri)", "R1-S2 (tengah)", "R1-S3 (kanan)",
-    "R2-S1", "R2-S2", "R2-S3",
-    "R3-S1", "R3-S2", "R3-S3",
+    "Rak1 · kiri", "Rak1 · tengah", "Rak1 · kanan",
+    "Rak2 · kiri", "Rak2 · tengah", "Rak2 · kanan",
+    "Rak3 · kiri", "Rak3 · tengah", "Rak3 · kanan",
+]
+
+# Kode internal untuk rumus / output Slot Target (R1-S1 = Rak 1 Slot 1)
+_MARKER_SLOT_LABELS = [
+    ("A", "R1-S1 (Rak1 kiri)"), ("B", "R1-S2 (Rak1 tengah)"), ("C", "R1-S3 (Rak1 kanan)"),
+    ("D", "R2-S1 (Rak2 kiri)"), ("E", "R2-S2 (Rak2 tengah)"), ("F", "R2-S3 (Rak2 kanan)"),
+    ("G", "R3-S1 (Rak3 kiri)"), ("H", "R3-S2 (Rak3 tengah)"), ("I", "R3-S3 (Rak3 kanan)"),
 ]
 
 # Baris tetap di sheet Undian Kubus (untuk rumus antar-sheet)
 UNDIAN_CAT_FIRST = 10
 UNDIAN_CAT_LAST = 18
-UNDIAN_POS_FIRST = 25
-UNDIAN_POS_LAST = 33
+UNDIAN_POS_FIRST = 28
+UNDIAN_POS_LAST = 36
 UNDIAN_SHEET = "'Undian Kubus'"
 CAT_RANGE = f"{UNDIAN_SHEET}!$A${UNDIAN_CAT_FIRST}:$D${UNDIAN_CAT_LAST}"
-POS_RANGE = f"{UNDIAN_SHEET}!$A${UNDIAN_POS_FIRST}:$E${UNDIAN_POS_LAST}"
+POS_RANGE = f"{UNDIAN_SHEET}!$A${UNDIAN_POS_FIRST}:$I${UNDIAN_POS_LAST}"
+MARKER_VALUE_ROW = UNDIAN_CAT_LAST + 6  # baris isian warna marker (setelah keterangan R/S)
+MARKER_RANGE = f"{UNDIAN_SHEET}!$A${MARKER_VALUE_ROW}:$I${MARKER_VALUE_ROW}"
 MODUL_D_BOBOT_SUM = 12.9  # sesuai dokumen teknis (D2a 0.3 + D2b 0.6)
+
+# Pemetaan slot rak → sel marker (baris MARKER_VALUE_ROW)
+_SLOT_MARKER_MAP = [
+    ('OR(E{r}="Rak 1",E{r}="R1")', ("kiri", "s1", "r1-s1"), "A"),
+    ('OR(E{r}="Rak 1",E{r}="R1")', ("tengah", "s2", "r1-s2"), "B"),
+    ('OR(E{r}="Rak 1",E{r}="R1")', ("kanan", "s3", "r1-s3"), "C"),
+    ('OR(E{r}="Rak 2",E{r}="R2")', ("kiri", "s1", "r2-s1"), "D"),
+    ('OR(E{r}="Rak 2",E{r}="R2")', ("tengah", "s2", "r2-s2"), "E"),
+    ('OR(E{r}="Rak 2",E{r}="R2")', ("kanan", "s3", "r2-s3"), "F"),
+    ('OR(E{r}="Rak 3",E{r}="R3")', ("kiri", "s1", "r3-s1"), "G"),
+    ('OR(E{r}="Rak 3",E{r}="R3")', ("tengah", "s2", "r3-s2"), "H"),
+    ('OR(E{r}="Rak 3",E{r}="R3")', ("kanan", "s3", "r3-s3"), "I"),
+]
+
+def _trim_trailing_comma(expr: str) -> str:
+    """Hapus koma+spasi di akhir hasil penggabungan IF&IF&..."""
+    return f'IF({expr}="","",IF(LEN({expr})>2,LEFT({expr},LEN({expr})-2),{expr}))'
+
+
+def _slot_list_expr(warna_expr: str, mr: int, *, cross_sheet: bool = False) -> str:
+    """Daftar slot marker yang cocok — tanpa TEXTJOIN (kompatibel Excel 2010+)."""
+    pieces = []
+    for col, label in _MARKER_SLOT_LABELS:
+        ref = f"{UNDIAN_SHEET}!${col}${mr}" if cross_sheet else f"${col}${mr}"
+        pieces.append(f'IF({ref}={warna_expr},"{label}, ","")')
+    return _trim_trailing_comma("&".join(pieces))
+
+
+def _rak_list_expr(warna_expr: str, mr: int) -> str:
+    inner = (
+        f'IF(COUNTIF($A${mr}:$C${mr},{warna_expr})>0,"Rak 1, ","")&'
+        f'IF(COUNTIF($D${mr}:$F${mr},{warna_expr})>0,"Rak 2, ","")&'
+        f'IF(COUNTIF($G${mr}:$I${mr},{warna_expr})>0,"Rak 3, ","")'
+    )
+    return _trim_trailing_comma(inner)
+
+
+def _lokasi_awal_formula(r: int) -> str:
+    return (
+        f'=IF(A{r}="","",'
+        f'IF(E{r}="","(belum diisi — isi kolom E & F)",'
+        f'TRIM(E{r}&IF(F{r}<>""," — "&F{r},""))))'
+    )
+
+
+def _target_rak_formula(r: int) -> str:
+    mr = MARKER_VALUE_ROW
+    inner = _rak_list_expr(f"B{r}", mr)
+    return (
+        f'=IF(B{r}="","",'
+        f'IF(COUNTA($A${mr}:$I${mr})=0,"(isi warna marker baris {mr})",'
+        f'{inner}))'
+    )
+
+
+def _target_marker_formula(r: int) -> str:
+    mr = MARKER_VALUE_ROW
+    slots = _slot_list_expr(f"B{r}", mr, cross_sheet=False)
+    return (
+        f'=IF(B{r}="","",'
+        f'IF(COUNTA($A${mr}:$I${mr})=0,"(isi warna marker baris {mr})",'
+        f'IF({slots}="","","Slot marker "&B{r}&": "&{slots})))'
+    )
+
+
+def _modul_e_posisi_awal(r: int) -> str:
+    return (
+        f'=IF(B{r}="","",'
+        f'IF(IFERROR(VLOOKUP(B{r},{POS_RANGE},5,FALSE),"")="",'
+        f'"→ isi Rak/Stand & Slot (sheet Undian Kubus)",'
+        f'IFERROR(VLOOKUP(B{r},{POS_RANGE},4,FALSE),"")))'
+    )
+
+
+def _modul_e_slot_target(r: int) -> str:
+    mr = MARKER_VALUE_ROW
+    slots = _slot_list_expr(f"C{r}", mr, cross_sheet=True)
+    return (
+        f'=IF(B{r}="","",'
+        f'IF(C{r}="","",'
+        f'IF(COUNTA({MARKER_RANGE})=0,"→ isi warna marker baris {mr} (Undian)",'
+        f'{slots})))'
+    )
+
+
+def _modul_e_ok_awal(r: int) -> str:
+    return (
+        f'=IF(B{r}="","",IFERROR(VLOOKUP(B{r},{POS_RANGE},7,FALSE),""))'
+    )
+
+
+def _sudah_benar_formula(r: int) -> str:
+    mr = MARKER_VALUE_ROW
+    clauses = []
+    for rak_expr, aliases, col in _SLOT_MARKER_MAP:
+        rak = rak_expr.format(r=r)
+        slot_or = ",".join(f'LOWER(F{r})="{a}"' for a in aliases)
+        clauses.append(f"AND({rak},OR({slot_or}),${col}${mr}=B{r})")
+    inner = ",".join(clauses)
+    return f'=IF(OR(A{r}="",E{r}="",F{r}=""),"",IF(OR({inner}),1,0))'
 
 
 def style_header_row(ws, row: int, cols: int) -> None:
@@ -63,9 +192,32 @@ def sheet_title(ws, text: str, merge_end: str = "K1") -> None:
     ws["A1"].font = Font(bold=True, size=14)
 
 
+def add_github_help(
+    ws,
+    url: str,
+    label: str,
+    *,
+    row: int = 2,
+    merge_end: str = "K",
+) -> None:
+    """Baris bantuan dengan hyperlink ke panduan di GitHub."""
+    ws.merge_cells(f"A{row}:{merge_end}{row}")
+    cell = ws.cell(row, 1, label)
+    cell.hyperlink = url
+    cell.font = Font(color="0563C1", underline="single", size=10, italic=True)
+    cell.alignment = Alignment(wrap_text=True, vertical="top")
+    ws.row_dimensions[row].height = 18
+
+
 def sheet_undian_kubus(wb: Workbook) -> None:
     ws = wb.create_sheet("Undian Kubus")
     sheet_title(ws, "LEMBAR UNDIAN POSISI KUBUS — LKS 2026")
+    add_github_help(
+        ws,
+        SOP_LINKS["undian"],
+        "Bingung cara isi? Buka panduan Undian Kubus di GitHub (klik di sini)",
+        merge_end="J",
+    )
 
     fields = [
         ("A3", "Run ID:", "B3"), ("D3", "Tim No:", "E3"), ("G3", "Nama Tim:", "H3"),
@@ -90,12 +242,43 @@ def sheet_undian_kubus(wb: Workbook) -> None:
     cat_range = CAT_RANGE
 
     m_title = UNDIAN_CAT_LAST + 2
-    ws.cell(m_title, 1, "KONFIGURASI MARKER RAK (isi warna: Merah / Hijau / Biru)")
+    ws.merge_cells(f"A{m_title}:I{m_title}")
+    ws.cell(m_title, 1, "KONFIGURASI MARKER RAK — isi warna di baris 24 (ketik: Merah / Hijau / Biru)")
     ws.cell(m_title, 1).font = Font(bold=True, size=12)
-    m_hdr = m_title + 1
+    ws.cell(m_title, 1).alignment = Alignment(wrap_text=True, vertical="top")
+    ws.row_dimensions[m_title].height = 28
+
+    m_legend = m_title + 1
+    ws.merge_cells(f"A{m_legend}:I{m_legend}")
+    ws.cell(m_legend, 1, (
+        "KETERANGAN: R1–R3 = Rak 1–3 di arena (3 buah rak, masing-masing 3 slot). "
+        "S1/S2/S3 = Slot kiri / tengah / kanan (dilihat dari depan rak). "
+        "Marker = warna label di ATAS slot — kubus sukses jika ditaruh di slot yang marker-nya "
+        "sama warnanya dengan kubus."
+    ))
+    ws.cell(m_legend, 1).font = Font(italic=True, size=10, color="404040")
+    ws.cell(m_legend, 1).alignment = Alignment(wrap_text=True, vertical="top")
+    ws.row_dimensions[m_legend].height = 42
+
+    m_group = m_legend + 1
+    group_fill = PatternFill("solid", fgColor="D6E4F0")
+    for col_start, col_end, label in ((1, 3, "▼ RAK 1"), (4, 6, "▼ RAK 2"), (7, 9, "▼ RAK 3")):
+        ws.merge_cells(
+            start_row=m_group, start_column=col_start,
+            end_row=m_group, end_column=col_end,
+        )
+        cell = ws.cell(m_group, col_start, label)
+        cell.font = Font(bold=True, size=11, color="1F4E79")
+        cell.fill = group_fill
+        cell.alignment = Alignment(horizontal="center", vertical="center")
+
+    m_hdr = m_group + 1
     for c, lbl in enumerate(MARKER_LABELS, 1):
         ws.cell(m_hdr, c, lbl)
     style_header_row(ws, m_hdr, len(MARKER_LABELS))
+    marker_input_fill = PatternFill("solid", fgColor="FFF2CC")
+    for c in range(1, len(MARKER_LABELS) + 1):
+        ws.cell(MARKER_VALUE_ROW, c).fill = marker_input_fill
 
     p_title = m_hdr + 2
     ws.cell(p_title, 1, "POSISI AWAL SETELAH UNDIAN (isi ID kubus — kolom lain otomatis)")
@@ -112,17 +295,51 @@ def sheet_undian_kubus(wb: Workbook) -> None:
     for r in range(UNDIAN_POS_FIRST, UNDIAN_POS_LAST + 1):
         ws.cell(r, 2, f'=IF(A{r}="","",VLOOKUP(A{r},{cat_range},2,FALSE))')
         ws.cell(r, 3, f'=IF(A{r}="","",VLOOKUP(A{r},{cat_range},3,FALSE))')
+        ws.cell(r, 4, _lokasi_awal_formula(r))
+        ws.cell(r, 7, _sudah_benar_formula(r))
+        ws.cell(r, 8, _target_rak_formula(r))
+        ws.cell(r, 9, _target_marker_formula(r))
         ws.cell(r, 10, f'=IF(G{r}="","",IF(G{r}=1,0,1))')
 
+    dv_rak = DataValidation(
+        type="list",
+        formula1='"Rak 1,Rak 2,Rak 3,Stand A,Stand B,Stand C,Lantai"',
+        allow_blank=True,
+    )
+    dv_slot = DataValidation(type="list", formula1='"kiri,tengah,kanan"', allow_blank=True)
+    ws.add_data_validation(dv_rak)
+    ws.add_data_validation(dv_slot)
+    for r in range(UNDIAN_POS_FIRST, UNDIAN_POS_LAST + 1):
+        dv_rak.add(ws.cell(r, 5))
+        dv_slot.add(ws.cell(r, 6))
+
     obs_title = UNDIAN_POS_LAST + 2
-    ws.cell(obs_title, 1, "OBSTACLE (catat area / deskripsi posisi)")
-    ws.cell(obs_title, 1).font = Font(bold=True)
-    obs_hdr = obs_title + 1
+    ws.merge_cells(f"A{obs_title}:J{obs_title}")
+    ws.cell(obs_title, 1, (
+        "OBSTACLE — catat posisi obstacle yang dipakai di run ini "
+        "(isi baris di bawah, kolom Obs 1–10). "
+        "Tulis lokasi singkat; kolom tidak dipakai dikosongkan."
+    ))
+    ws.cell(obs_title, 1).font = Font(bold=True, size=11)
+    ws.cell(obs_title, 1).alignment = Alignment(wrap_text=True, vertical="top")
+    ws.row_dimensions[obs_title].height = 36
+
+    obs_hint = obs_title + 1
+    ws.merge_cells(f"A{obs_hint}:J{obs_hint}")
+    ws.cell(obs_hint, 1, (
+        "Contoh isian: «kiri GATE» | «tengah arena» | «dekat Rak 2» | «antara START dan Rak 1» | "
+        "«kanan bawah». Jumlah obstacle mengikuti soal hari itu (biasanya 6–10 buah)."
+    ))
+    ws.cell(obs_hint, 1).font = Font(italic=True, size=10, color="404040")
+    ws.cell(obs_hint, 1).alignment = Alignment(wrap_text=True)
+
+    obs_hdr = obs_hint + 1
     for c in range(1, 11):
         ws.cell(obs_hdr, c, f"Obs {c}")
     style_header_row(ws, obs_hdr, 10)
+    obs_data = obs_hdr + 1
 
-    sig = obs_hdr + 2
+    sig = obs_data + 2
     ws.cell(sig, 1, "Tanda tangan Juru Acak:")
     ws.cell(sig, 4, "Tanda tangan Juri:")
     ws.cell(sig, 7, "Tanda tangan Peserta (saksi):")
@@ -135,6 +352,12 @@ def sheet_undian_kubus(wb: Workbook) -> None:
 def sheet_log_run(wb: Workbook) -> None:
     ws = wb.create_sheet("Log Run Otonom")
     sheet_title(ws, "LEMBAR LOG RUN OTONOM — LKS 2026")
+    add_github_help(
+        ws,
+        SOP_LINKS["log_run"],
+        "Bingung alur SIAP/START & pencatatan? Buka panduan Log Run di GitHub (klik di sini)",
+        merge_end="H",
+    )
 
     ws["A3"], ws["C3"], ws["E3"], ws["G3"] = "Tim No:", "Nama Tim:", "Kontingen:", "Arena No:"
     ws["A4"], ws["C4"], ws["E4"], ws["G4"] = "Hari:", "Tanggal:", "Juri Penilai:", "Juri Pendamping:"
@@ -217,11 +440,17 @@ def sheet_log_run(wb: Workbook) -> None:
 
 
 def sheet_modul_a(wb: Workbook) -> None:
-    ws = wb.active
+    ws = wb["Sheet"] if "Sheet" in wb.sheetnames else wb.create_sheet("Modul A")
     ws.title = "Modul A"
     ws["A1"] = "MODUL A — Organisasi & Manajemen Kerja (8 poin, Judgement)"
     ws.merge_cells("A1:I1")
     ws["A1"].font = Font(bold=True, size=14)
+    add_github_help(
+        ws,
+        SOP_LINKS["modul_a"],
+        "Bingung cara nilai Modul A? Buka panduan di GitHub (klik di sini)",
+        merge_end="I",
+    )
 
     ws["A3"], ws["C3"], ws["E3"], ws["G3"] = "Tim No:", "Nama Tim:", "Kontingen:", "Tanggal:"
     ws["A4"], ws["C4"], ws["E4"] = "Juri 1:", "Juri 2:", "Juri 3:"
@@ -281,6 +510,12 @@ def sheet_modul_b(wb: Workbook) -> None:
     ws["A1"] = "MODUL B — Jurnal / Laporan Teknis (10 poin: J 8 + M 2)"
     ws.merge_cells("A1:K1")
     ws["A1"].font = Font(bold=True, size=14)
+    add_github_help(
+        ws,
+        SOP_LINKS["modul_b"],
+        "Bingung cara nilai Modul B? Buka panduan di GitHub (klik di sini)",
+        merge_end="K",
+    )
 
     ws["A3"], ws["C3"], ws["E3"], ws["G3"] = "Tim No:", "Nama Tim:", "Kontingen:", "Deadline:"
     ws["A4"], ws["C4"] = "Juri 1:", "Juri 2:"
@@ -354,6 +589,12 @@ def sheet_modul_c(wb: Workbook) -> None:
     ws["A1"] = "MODUL C — Pembuatan & Perakitan Robot (10 poin, Judgement)"
     ws.merge_cells("A1:J1")
     ws["A1"].font = Font(bold=True, size=14)
+    add_github_help(
+        ws,
+        SOP_LINKS["modul_c"],
+        "Bingung cara nilai Modul C? Buka panduan di GitHub (klik di sini)",
+        merge_end="J",
+    )
 
     ws["A3"], ws["C3"], ws["E3"] = "Tim No:", "Nama Tim:", "Waktu Mulai:"
     ws["G3"], ws["I3"] = "Waktu Selesai:", "Durasi (jam):"
@@ -403,6 +644,12 @@ def sheet_modul_d(wb: Workbook) -> None:
     ws["A1"] = "MODUL D — Gerakan Dasar & Manajemen Objek (12 poin, Measurement)"
     ws.merge_cells("A1:G1")
     ws["A1"].font = Font(bold=True, size=14)
+    add_github_help(
+        ws,
+        SOP_LINKS["modul_d"],
+        "Bingung cara nilai Modul D? Buka panduan di GitHub (klik di sini)",
+        merge_end="G",
+    )
 
     ws["A3"], ws["C3"], ws["E3"] = "Tim No:", "Nama Tim:", "Tanggal:"
     ws["A4"] = "Juri Penilai:"
@@ -451,13 +698,27 @@ def sheet_modul_e(wb: Workbook) -> None:
     ws["A1"] = "MODUL E — Performansi Otonom (60 poin, Measurement)"
     ws.merge_cells("A1:J1")
     ws["A1"].font = Font(bold=True, size=14)
+    add_github_help(
+        ws,
+        SOP_LINKS["modul_e"],
+        "Bingung cara pakai Modul E? Buka panduan lengkap di GitHub (klik di sini)",
+        merge_end="K",
+    )
 
     ws["A3"], ws["C3"], ws["E3"], ws["G3"] = "Tim No:", "Run ID:", "Hari:", "Trial/Final:"
     ws["A4"], ws["C4"] = "Arena No:", "Waktu START:"
+    ws.merge_cells("A5:K5")
+    ws["A5"] = (
+        "PETUNJUK: Isi sheet Undian Kubus dulu — baris 24 (warna marker, baris kuning), "
+        "kolom A baris 28–36 (ID kubus), E (Rak/Stand), F (Slot). Kolom di bawah terisi otomatis."
+    )
+    ws["A5"].font = Font(italic=True, color="C00000")
+    ws["A5"].fill = PatternFill("solid", fgColor="FFF2CC")
+    ws["A5"].alignment = Alignment(wrap_text=True)
 
     headers = [
-        "No", "ID Kubus", "Warna", "Bentuk", "Posisi Awal", "Target Rak",
-        "Target Marker", "Hasil (1/0)", "Bobot", "Skor", "Catatan",
+        "No", "ID Kubus", "Warna", "Bentuk", "Posisi Awal", "Slot Target",
+        "OK Awal (1/0)", "Hasil Run (1/0)", "Bobot", "Skor", "Catatan",
     ]
     start = 6
     for i, h in enumerate(headers, 1):
@@ -471,7 +732,9 @@ def sheet_modul_e(wb: Workbook) -> None:
         ws.cell(r, 2, f"=IF({UNDIAN_SHEET}!A{undian_row}=\"\",\"\",{UNDIAN_SHEET}!A{undian_row})")
         ws.cell(r, 3, f'=IF(B{r}="","",VLOOKUP(B{r},{CAT_RANGE},2,FALSE))')
         ws.cell(r, 4, f'=IF(B{r}="","",VLOOKUP(B{r},{CAT_RANGE},3,FALSE))')
-        ws.cell(r, 5, f'=IF(B{r}="","",IFERROR(VLOOKUP(B{r},{POS_RANGE},4,FALSE),""))')
+        ws.cell(r, 5, _modul_e_posisi_awal(r))
+        ws.cell(r, 6, _modul_e_slot_target(r))
+        ws.cell(r, 7, _modul_e_ok_awal(r))
         ws.cell(r, 9, "=60/9")
         ws.cell(r, 10, f"=IF(H{r}=\"\",0,H{r}*I{r})")
 
@@ -500,6 +763,12 @@ def sheet_rekap(wb: Workbook) -> None:
     ws["A1"] = "REKAPITULASI SKOR — Robot Bergerak Otonom LKS 2026"
     ws.merge_cells("A1:F1")
     ws["A1"].font = Font(bold=True, size=14)
+    add_github_help(
+        ws,
+        SOP_LINKS["rekap"],
+        "Bingung cara baca total & input CIS? Buka panduan di GitHub (klik di sini)",
+        merge_end="F",
+    )
 
     ws["A3"], ws["C3"], ws["E3"] = "Tim No:", "Nama Tim:", "Kontingen:"
 
@@ -545,22 +814,49 @@ def sheet_panduan(wb: Workbook) -> None:
     ws = wb.create_sheet("Panduan", 0)
     ws["A1"] = "PANDUAN PENGGUNAAN — LKS 2026 Penilaian Juri"
     ws["A1"].font = Font(bold=True, size=14)
+    ws["A2"] = "BANTUAN ONLINE (GitHub) — klik baris di bawah jika bingung cara pakai:"
+    ws["A2"].font = Font(bold=True, size=11)
+
+    help_rows = [
+        ("Daftar semua panduan juri", SOP_LINKS["panduan"]),
+        ("Modul A — Organisasi & manajemen kerja", SOP_LINKS["modul_a"]),
+        ("Modul B — Jurnal teknis", SOP_LINKS["modul_b"]),
+        ("Modul C — Perakitan robot", SOP_LINKS["modul_c"]),
+        ("Modul D — Gerakan dasar", SOP_LINKS["modul_d"]),
+        ("Modul E — panduan lengkap (WAJIB BACA)", SOP_LINKS["modul_e"]),
+        ("Log Run Otonom — panduan lengkap (WAJIB BACA)", SOP_LINKS["log_run"]),
+        ("Modul E — contoh angka step-by-step", GITHUB_CONTOH_MODUL_E),
+        ("Undian Kubus — pengacakan posisi", SOP_LINKS["undian"]),
+        ("Rekapitulasi — total & CIS", SOP_LINKS["rekap"]),
+        ("Repositori lengkap", GITHUB_REPO),
+    ]
+    for i, (label, url) in enumerate(help_rows, 3):
+        cell = ws.cell(i, 1, f"→ {label}")
+        cell.hyperlink = url
+        cell.font = Font(color="0563C1", underline="single", size=11)
+
     lines = [
         "",
         "SATU FILE INI untuk seluruh penilaian — jangan buka file CSV terpisah.",
+        "Kompatibel Excel 2010+ (tanpa fungsi TEXTJOIN).",
+        "",
+        "LATIHAN: buka LKS2026-Penilaian-Juri-CONTOH.xlsx untuk melihat contoh terisi.",
         "",
         "1. Duplikat workbook ini per TIM (Save As).",
         "2. Modul A/B/C: isi skor Juri 1-3 (0-3). Skor otomatis.",
         "3. Modul B: isi Tepat Waktu (1/0) di G4.",
-        "4. Undian Kubus: isi ID kubus setelah pengacakan — Warna/Bentuk otomatis.",
-        "5. Log Run Otonom: checklist SIAP/START + kronologi; skor tarik dari Modul E.",
-        "6. Modul D/E: isi Hasil 1 atau 0. Modul E: isi ID Kubus (kolom B) dari undian.",
-        "7. Rekapitulasi: total otomatis dari Modul A-E.",
-        "8. Input skor resmi ke CIS (Marking Scheme Chief Expert).",
+        "4. UNDIAN KUBUS (isi DULU sebelum Modul E):",
+        "   a. Baris 24 (kuning): warna marker Merah/Hijau/Biru per slot.",
+        "   b. Baris 28–36: kolom A = ID kubus | E = Rak/Stand | F = Slot.",
+        "5. MODUL E: kolom B-G otomatis. Juri isi kolom H (Hasil Run 1/0) saja.",
+        "   OK Awal = posisi sudah benar sebelum run | Hasil Run = sukses setelah run.",
+        "6. Log Run Otonom: checklist SIAP/START + kronologi.",
+        "7. Rekapitulasi: total otomatis. Input ke CIS (Chief Expert).",
         "",
         "Sheet: Panduan | Modul A-E | Undian Kubus | Log Run | Rekapitulasi",
     ]
-    for i, line in enumerate(lines, 2):
+    start = 3 + len(help_rows) + 1
+    for i, line in enumerate(lines, start):
         ws.cell(i, 1, line)
     ws.column_dimensions["A"].width = 80
 

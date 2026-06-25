@@ -72,6 +72,30 @@ K-M2, K-M3, K-H2, K-H3, K-B2, K-B3
 
 > Skenario ini sengaja membuat **konflik slot** agar juri berlatih menilai: sukses = kubus di slot dengan marker warna yang cocok **dan** slot tidak double-booked.
 
+### Cara isi di Excel (`LKS2026-Penilaian-Juri-CONTOH.xlsx`)
+
+**Sheet Undian Kubus:**
+
+1. **Baris 24** — isi warna marker:
+   `Merah | Hijau | Biru | Biru | Merah | Hijau | Hijau | Biru | Merah`
+2. **Baris 28–36** — isi kolom A, E, F sesuai tabel di atas.
+
+| Baris | A (ID) | E (Rak/Stand) | F (Slot) |
+|-------|--------|---------------|----------|
+| 28 | K-M1 | Rak 1 | kiri |
+| 29 | K-M2 | Stand A | depan |
+| 30 | K-M3 | Rak 2 | tengah |
+| 31 | K-H1 | Rak 3 | kiri |
+| 32 | K-H2 | Stand B | depan |
+| 33 | K-H3 | Rak 1 | kanan |
+| 34 | K-B1 | Rak 2 | kiri |
+| 35 | K-B2 | Rak 3 | tengah |
+| 36 | K-B3 | Stand C | depan |
+
+**Sheet Modul E** — setelah Undian terisi, cek kolom otomatis lalu isi **Hasil Run (1/0)**.
+
+Panduan lengkap: [`docs/PANDUAN-MODUL-E.md`](PANDUAN-MODUL-E.md) · Log Run: [`docs/PANDUAN-LOG-RUN.md`](PANDUAN-LOG-RUN.md)
+
 ---
 
 ## 3. Alur Run Latihan (Modul E)
@@ -85,25 +109,23 @@ K-M2, K-M3, K-H2, K-H3, K-B2, K-B3
 | 3 | 08:41 | Juri **acak ulang**: tukar posisi K-H2 ↔ K-B3 |
 | 4 | 08:42 | Sinyal **START** — tim tekan tombol di robot |
 | 5 | 08:42–08:55 | Run otonom |
-| 6 | 08:55 | Catat hasil per kubus di `modul-e-otonom.csv` |
+| 6 | 08:55 | Catat **Hasil Run (1/0)** per kubus di sheet **Modul E** |
 
 ### Hasil contoh Run 1 (untuk latihan penilaian)
 
-| ID | Dipindah? | Berhasil? | Skor (6,67) |
+| ID | Dipindah? | Berhasil? | Skor (60/9) |
 |----|-----------|-----------|-------------|
-| K-M2 | Ya | Ya | 6,67 |
-| K-M3 | Ya | Ya | 6,67 |
+| K-M2 | Ya | Ya | 60/9 |
+| K-M3 | Ya | Ya | 60/9 |
 | K-H2 | Ya | Tidak (jatuh) | 0 |
-| K-H3 | Ya | Ya | 6,67 |
-| K-B2 | Ya | Ya | 6,67 |
-| K-B3 | Ya | Ya | 6,67 |
-| K-M1, K-H1, K-B1 | Tidak | Sudah benar | 6,67 each |
+| K-H3 | Ya | Ya | 60/9 |
+| K-B2 | Ya | Ya | 60/9 |
+| K-B3 | Ya | Ya | 60/9 |
+| K-M1, K-H1, K-B1 | Tidak | Sudah benar | 60/9 each |
 
-**Skor Run 1:** 6 × 6,67 + 3 × 6,67 (yang sudah benar) = ... 
+**Catatan penilaian:** Kolom **OK Awal** di Excel = referensi posisi benar sebelum run. Kolom **Hasil Run** = skor resmi setelah run. Konfirmasi ke CE apakah kubus OK Awal = 1 otomatis dapat poin.
 
-**Catatan penilaian:** Kubus yang **sudah benar sejak awal** — putuskan dengan CE apakah dapat poin penuh atau hanya kubus yang **dipindahkan** yang dinilai. Template repo memberi **9 baris**; isi **1** jika kondisi sukses terpenuhi per baris.
-
-**Skor contoh (semua 9 baris dinilai):** 8 sukses × 6,67 ≈ **53,36** / 60
+**Skor contoh (8 sukses):** 8 × 60/9 ≈ **53,33** / 60
 
 ---
 
@@ -155,9 +177,9 @@ Selisih A3: jika J3=0 → selisih 2 → **ulangi penilaian A3**.
 
 ## 7. Checklist Juri Setelah Latihan
 
-- [ ] Semua lembar terisi (undian, run, modul D/E)
-- [ ] Tanda tangan juri + peserta (run otonom)
-- [ ] Rekap masuk `rekapitulasi-skor.csv` atau sheet Excel
+- [ ] Semua sheet Excel terisi (Undian Kubus, Log Run, Modul D/E)
+- [ ] Tanda tangan juri + peserta (Log Run Otonom)
+- [ ] Rekapitulasi total otomatis di sheet Excel
 - [ ] Diskusi dengan CE: konflik slot, kubus sudah benar, bobot CIS
 
 ---

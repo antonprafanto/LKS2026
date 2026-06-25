@@ -300,11 +300,21 @@ def main() -> None:
 
     _add_bullets(prs, "File Penilaian Juri", [
         "Pakai SATU file: templates/LKS2026-Penilaian-Juri.xlsx",
+        "File latihan: LKS2026-Penilaian-Juri-CONTOH.xlsx (sudah terisi contoh)",
         "Duplikat per tim (Save As) — jangan pakai file CSV",
-        "Sheet utama: Modul A–E, Undian Kubus, Log Run, Rekapitulasi",
-        "Acuan prosedur: docs/SOP-JURI.md",
-        "Repo materi: github.com/antonprafanto/LKS2026",
+        "Kompatibel Excel 2010+ (Microsoft Excel desktop)",
+        "Panduan Excel: docs/CONTOH-EXCEL-MODUL-E.md | SOP: docs/SOP-JURI.md",
     ], sub="Marking Scheme CIS = sumber kebenaran poin detail (dari Chief Expert).")
+
+    _add_table(prs, "Cara Isi Excel — Sheet Undian Kubus", [
+        "Langkah", "Di mana", "Isi apa",
+    ], [
+        ["1", "Baris 24 (kuning)", "Warna marker: Merah / Hijau / Biru per slot"],
+        ["2", "Baris 28–36 kolom A", "ID kubus: K-M1, K-H2, dst."],
+        ["3", "Kolom E", "Rak/Stand: Rak 1, Stand A, ... (dropdown)"],
+        ["4", "Kolom F", "Slot: kiri / tengah / kanan (dropdown)"],
+        ["5", "Sheet Modul E", "Otomatis — juri isi Hasil Run (1/0) saja"],
+    ])
 
     _add_bullets(prs, "Identitas Lomba", [
         "Bidang: Robot Bergerak Otonom (Autonomous Mobile Robotics)",
@@ -365,12 +375,12 @@ def main() -> None:
         "Siapkan pengacakan kubus",
     ], "Sentuh laptop setelah SIAP = pelanggaran.")
 
-    _add_demo_step(prs, 4, "Pengacakan posisi kubus", [
+    _add_demo_step(prs, 4, "Pengacakan & isi Excel Undian Kubus", [
         "Acak 9 kubus di rak dan stand (beberapa sengaja salah)",
-        "Isi kolom ID di sheet Undian Kubus",
-        "Warna & bentuk terisi otomatis (VLOOKUP)",
-        "Peserta tidak mengatur posisi setelah SIAP",
-    ], "Setelah SIAP, posisi kubus diacak ulang.")
+        "Baris 24: isi warna marker per slot (Merah/Hijau/Biru)",
+        "Baris 28–36: kolom A = ID | E = Rak/Stand | F = Slot",
+        "Warna, bentuk, lokasi, slot target terisi otomatis",
+    ], "Isi Undian SEBELUM run — Modul E membaca data dari sini.")
 
     _add_demo_step(prs, 5, "Sinyal START & run otonom", [
         "Juri beri sinyal START",
@@ -379,20 +389,20 @@ def main() -> None:
         "Catat di sheet Log Run Otonom",
     ], "Jangan sentuh robot setelah START.")
 
-    _add_demo_step(prs, 6, "Penilaian per kubus", [
+    _add_demo_step(prs, 6, "Penilaian per kubus (Modul E)", [
         "Sukses = kubus di slot rak, marker warna cocok, stabil",
-        "Isi kolom Hasil (1/0) di sheet Modul E",
-        "Bobot: 60/9 poin per kubus (total 60)",
-        "Konfirmasi ke CE: kubus sudah benar di awal dapat poin atau tidak",
+        "Kolom OK Awal = sudah benar sebelum run (referensi)",
+        "Kolom Hasil Run (1/0) = keputusan juri SETELAH run",
+        "Bobot: 60/9 poin per kubus (total 60) — konfirmasi ke CE",
     ])
 
-    _add_table(prs, "Contoh penilaian (latihan)", [
-        "Kubus", "Awal", "Target", "Hasil", "Skor",
+    _add_table(prs, "Contoh baris Modul E (setelah Undian terisi)", [
+        "ID", "Posisi Awal", "Slot Target", "OK Awal", "Hasil Run",
     ], [
-        ["K-M2", "Stand A", "Marker merah", "1 Berhasil", "60/9"],
-        ["K-H2", "Stand B", "Marker hijau", "0 Jatuh", "0"],
-        ["K-B3", "Stand C", "Marker biru", "1 Berhasil", "60/9"],
-    ], )
+        ["K-M2", "Stand A — depan", "R1-S1, R2-S2, R3-S3", "0", "1"],
+        ["K-H2", "Stand B — depan", "R1-S2, R2-S3, R3-S1", "0", "0"],
+        ["K-M1", "Rak 1 — kiri", "R1-S1, R2-S2, R3-S3", "1", "1"],
+    ])
 
     _add_demo_step(prs, 7, "Prosedur RETRY", [
         "Peserta boleh minta RETRY dan ubah program",
@@ -409,10 +419,10 @@ def main() -> None:
     ])
 
     _add_bullets(prs, "Latihan bersama juri", [
-        "Buka docs/SKENARIO-SOAL-CONTOH.md (Tim 05)",
-        "Praktikkan: SIAP → acak → START → isi Modul E",
-        "Simulasikan RETRY dan pelanggaran",
-        "Diskusi dengan CE: konflik slot & bobot CIS",
+        "Buka templates/LKS2026-Penilaian-Juri-CONTOH.xlsx (contoh terisi)",
+        "Baca docs/CONTOH-EXCEL-MODUL-E.md dan SKENARIO-SOAL-CONTOH.md",
+        "Praktikkan: isi Undian → cek Modul E → isi Hasil Run",
+        "Simulasikan RETRY dan pelanggaran SIAP/START",
     ])
 
     _add_section(prs, "Bagian 3", "Ringkasan Modul D, Arena & K3")

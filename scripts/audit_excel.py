@@ -83,15 +83,31 @@ def main() -> None:
             bug(f"Modul E C{r}: referensi sheet salah (Undian tanpa Kubus)")
         if isinstance(f, str) and "Undian Kubus" not in f and "VLOOKUP" in f:
             bug(f"Modul E C{r}: VLOOKUP tanpa sheet Undian Kubus")
+        for col, label in ((5, "Posisi Awal"), (6, "Slot Target"), (7, "OK Awal")):
+            fx = me.cell(r, col).value
+            if not (isinstance(fx, str) and fx.startswith("=IF")):
+                bug(f"Modul E {label} baris {r} harus rumus IF (kolom {col})")
+            if col == 6 and isinstance(fx, str) and "baris 24" not in fx and "baris 22" not in fx:
+                bug(f"Modul E Slot Target baris {r} harus cek marker baris isian")
+            if col == 7 and isinstance(fx, str) and ",7,FALSE)" not in fx.replace(" ", ""):
+                bug(f"Modul E OK Awal baris {r} harus VLOOKUP Undian kolom G")
 
     # --- Undian layout constants ---
     und = wb["Undian Kubus"]
     if und.cell(10, 1).value != "K-M1":
         bug(f"Undian A10 harus K-M1, dapat {und.cell(10,1).value!r}")
-    if und.cell(24, 1).value != "ID Kubus":
-        bug(f"Undian baris header posisi harus di 24, A24={und.cell(24,1).value!r}")
-    if not str(und.cell(25, 2).value).startswith("=IF"):
-        bug("Undian B25 harus rumus VLOOKUP")
+    if und.cell(23, 1).value != "Rak1 · kiri":
+        bug(f"Undian baris 23 header marker rusak: {und.cell(23,1).value!r}")
+    if und.cell(27, 1).value != "ID Kubus":
+        bug(f"Undian baris header posisi harus di 27, A27={und.cell(27,1).value!r}")
+    if not str(und.cell(28, 2).value).startswith("=IF"):
+        bug("Undian B28 harus rumus VLOOKUP")
+    if not str(und.cell(28, 4).value).startswith("=IF"):
+        bug("Undian D28 (Lokasi Awal) harus rumus otomatis")
+    if not str(und.cell(28, 8).value).startswith("=IF"):
+        bug("Undian H28 (Target Rak) harus rumus otomatis")
+    if not str(und.cell(28, 9).value).startswith("=IF"):
+        bug("Undian I28 (Target Marker) harus rumus otomatis")
 
     # --- Modul B total row ---
     mb = wb["Modul B"]

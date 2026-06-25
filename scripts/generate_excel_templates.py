@@ -367,7 +367,7 @@ def sheet_log_run(wb: Workbook) -> None:
     ws["A6"].font = Font(bold=True)
     run_fields = [
         ("A7", "Run No:", "B7"), ("D7", "Run ID:", "E7"), ("G7", "Trial/Final:", "H7"),
-        ("A8", "Waktu SIAP:", "B8"), ("D8", "Waktu START:", "E8"), ("G8", "Waktu Selesai:", "H8"),
+        ("A8", "Jam SIAP (nyata):", "B8"), ("D8", "Jam START (nyata):", "E8"), ("G8", "Jam selesai (nyata):", "H8"),
         ("A9", "Undian ulang (1/0):", "B9"), ("D9", "Retry (1/0):", "E9"), ("G9", "Retry No:", "H9"),
     ]
     for label_cell, label, val_cell in run_fields:

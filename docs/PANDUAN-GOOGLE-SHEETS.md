@@ -52,6 +52,23 @@ Menu **tidak muncul otomatis** sampai Anda Run + izinkan akses:
 
 ---
 
+## Kenapa Jam SIAP bukan 00:00:00?
+
+**B8, E8, H8** mencatat **jam di dinding** (kapan Anda klik), **bukan** stopwatch dari nol.
+
+Contoh dari run Anda:
+
+| Sel | Nilai | Artinya |
+|-----|-------|---------|
+| B8 Jam SIAP | `01:15:53` | Pukul 01:15:53 tim SIAP |
+| E8 Jam START | `01:16:03` | 10 detik kemudian, START |
+| H8 Jam selesai | `01:16:07` | Run selesai |
+| **K8 Durasi run** | **`0:00:04`** | **Ini stopwatch dari 0** — run hanya 4 detik |
+
+Yang **dari 0** hanya **kolom K** (durasi START → SELESAI). Jam SIAP sengaja jam nyata supaya log run bisa diaudit CE (*"tim SIAP jam berapa?"*).
+
+---
+
 ## Menu tidak muncul? Checklist
 
 | # | Cek | Solusi |

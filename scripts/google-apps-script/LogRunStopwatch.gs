@@ -61,17 +61,21 @@ function setupLogRunSheet() {
   sheet.getRange('K7:K8').setNumberFormat('[h]:mm:ss');
   sheet.getRange('K9').setNumberFormat('0.0');
 
-  sheet.getRange('J7').setValue('Durasi live:');
+  sheet.getRange('J7').setValue('Durasi run (dari 0):');
   sheet.getRange('J8').setValue('Durasi final:');
   sheet.getRange('J9').setValue('Menit:');
 
   safeMerge_(sheet, 'J6:L6');
-  sheet.getRange('J6').setValue('STOPWATCH — menu LKS Stopwatch (bar atas)');
+  sheet.getRange('J6').setValue('STOPWATCH — durasi run di K7 (bukan jam SIAP di B8)');
 
   safeMerge_(sheet, 'J10:L10');
   sheet.getRange('J10').setValue(
-    'Menu LKS Stopwatch → SIAP / START / SELESAI. Manual: Ctrl+Shift+; di B8/E8/H8.'
+    'B8/E8/H8 = JAM NYATA saat klik (bukan dari 0:00:00). Durasi run = kolom K7/K8.'
   );
+
+  sheet.getRange('A8').setValue('Jam SIAP (nyata):');
+  sheet.getRange('D8').setValue('Jam START (nyata):');
+  sheet.getRange('G8').setValue('Jam selesai (nyata):');
 
   var hasilRow = findRowByLabel_(sheet, 'Kubus berhasil ditempatkan benar:');
   if (hasilRow > 0) {

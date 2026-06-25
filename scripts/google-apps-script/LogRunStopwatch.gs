@@ -55,9 +55,11 @@ function buatMenuStopwatch_() {
 }
 
 function setupLogRunSheet() {
+  ensureTimezone_();
+
   var sheet = getLogSheet_();
 
-  sheet.getRange('K7').setFormula('=IF(E8="","",IF(H8<>"",H8-E8,NOW()-E8))');
+  sheet.getRange('K7').setFormula('=IF(E8="","",IF(H8<>"",H8-E8,JAM_WITA()-E8))');
   sheet.getRange('K8').setFormula('=IF(AND(E8<>"",H8<>""),H8-E8,"")');
   sheet.getRange('K9').setFormula('=IF(K8="","",ROUND(K8*24*60,1))');
   sheet.getRange('K7:K8').setNumberFormat('[h]:mm:ss');
@@ -72,7 +74,7 @@ function setupLogRunSheet() {
 
   safeMerge_(sheet, 'J10:L10');
   sheet.getRange('J10').setValue(
-    'B8/E8/H8 = JAM NYATA saat klik (bukan dari 0:00:00). Durasi run = kolom K7/K8.'
+    'B8/E8/H8 = jam lokal (' + TIMEZONE + '). Durasi run = K7/K8. Reset lalu klik ulang jika jam salah.'
   );
 
   sheet.getRange('A8').setValue('Jam SIAP (nyata):');
@@ -94,10 +96,47 @@ function setupLogRunSheet() {
   buatMenuStopwatch_();
 
   SpreadsheetApp.getActive().toast(
-    'Setup selesai. Cek menu "' + MENU_NAME + '" di bar atas.',
+    'Setup selesai. Timezone: ' + TIMEZONE + '. Klik Reset waktu lalu SIAP/START lagi.',
     'LKS 2026',
-    6
+    8
   );
+}
+
+function getTimezone_() {
+  return TIMEZONE;
+}
+
+/** Paksa timezone spreadsheet ke WITA (Samarinda) */
+function ensureTimezone_() {
+  SpreadsheetApp.getActiveSpreadsheet().setSpreadsheetTimeZone(TIMEZONE);
+}
+
+/** Jam WITA → angka 0–1 (format HH:mm:ss di sheet) — tampil 09:22 bukan 01:22 */
+function witaTimeFraction_() {
+  var now = new Date();
+  var h = Number(Utilities.formatDate(now, TIMEZONE, 'H'));
+  var m = Number(Utilities.formatDate(now, TIMEZONE, 'm'));
+  var s = Number(Utilities.formatDate(now, TIMEZONE, 's'));
+  return (h * 3600 + m * 60 + s) / 86400;
+}
+
+/**
+ * Fungsi custom untuk rumus sel (K7).
+ * @customfunction
+ */
+function JAM_WITA() {
+  return witaTimeFraction_();
+}
+
+function durationBetween_(start, end) {
+  if (start === '' || start === null || end === '' || end === null) {
+    return null;
+  }
+  var dur = Number(end) - Number(start);
+  if (dur < 0) {
+    dur += 1;
+  }
+  return dur;
 }
 
 function safeMerge_(sheet, a1) {
@@ -122,9 +161,9 @@ function getLogSheet_() {
 }
 
 function stampNow_(sheet, a1) {
-  var cell = sheet.getRange(a1);
-  cell.setValue(new Date());
-  cell.setNumberFormat('HH:mm:ss');
+  ensureTimezone_();
+  sheet.getRange(a1).setValue(witaTimeFraction_());
+  sheet.getRange(a1).setNumberFormat('HH:mm:ss');
 }
 
 function catatSIAP() {
@@ -162,11 +201,12 @@ function resetWaktuRun() {
 }
 
 function updateLiveDuration_(sheet) {
-  var start = sheet.getRange(CELL_START).getValue();
-  var end = sheet.getRange(CELL_SELESAI).getValue();
-  if (start && end && start.getTime && end.getTime) {
-    var ms = end.getTime() - start.getTime();
-    sheet.getRange(CELL_LIVE).setValue(ms / 86400000).setNumberFormat('[h]:mm:ss');
+  var dur = durationBetween_(
+    sheet.getRange(CELL_START).getValue(),
+    sheet.getRange(CELL_SELESAI).getValue()
+  );
+  if (dur !== null) {
+    sheet.getRange(CELL_LIVE).setValue(dur).setNumberFormat('[h]:mm:ss');
   }
 }
 

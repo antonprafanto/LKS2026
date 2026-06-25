@@ -1,15 +1,12 @@
 /**
- * LKS 2026 — Stopwatch Log Run Otonom untuk Google Sheets
+ * LKS 2026 — Stopwatch Log Run (SATU FILE — paste ke Code.gs saja)
  *
- * Cara pasang (sekali):
- * 1. Buka spreadsheet Google Sheets Anda
- * 2. Extensions → Apps Script
- * 3. Hapus isi default, paste seluruh file ini, Save
- * 4. Refresh spreadsheet → menu "⏱ Stopwatch Run" muncul di toolbar
- * 5. Saat run: Stopwatch Run → SIAP / START / SELESAI
+ * PENTING: buka dari spreadsheet → Extensions → Apps Script (bukan script.google.com)
  *
- * Sel waktu: B8 (SIAP), E8 (START), H8 (SELESAI)
- * Durasi final otomatis di K8/K9 (isi rumus di panduan)
+ * Setelah paste + Save:
+ * 1. Pilih fungsi buatMenuStopwatch → Run → izinkan akses
+ * 2. Kembali ke spreadsheet → menu "LKS Stopwatch" muncul di bar atas
+ * 3. Pilih setupLogRunSheet → Run (isi rumus K7/K8/K9)
  */
 
 var LOG_SHEET = 'Log Run Otonom';
@@ -17,25 +14,44 @@ var CELL_SIAP = 'B8';
 var CELL_START = 'E8';
 var CELL_SELESAI = 'H8';
 var CELL_LIVE = 'K7';
+var MENU_NAME = 'LKS Stopwatch';
 
 function onOpen() {
+  try {
+    buatMenuStopwatch_();
+  } catch (err) {
+    Logger.log('onOpen gagal: ' + err);
+  }
+}
+
+function onInstall() {
+  onOpen();
+}
+
+/** Jalankan manual dari Script Editor jika menu belum muncul */
+function buatMenuStopwatch() {
+  buatMenuStopwatch_();
+  SpreadsheetApp.getUi().alert(
+    'Menu "' + MENU_NAME + '" sudah dibuat.\n\n' +
+    'Kembali ke spreadsheet (tab browser). Menu ada di bar atas kanan.\n' +
+    'Jika belum kelihatan, tutup tab spreadsheet lalu buka lagi dari Drive.'
+  );
+}
+
+function buatMenuStopwatch_() {
   SpreadsheetApp.getUi()
-    .createMenu('\u23F1 Stopwatch Run')
-    .addItem('\u25B6 SIAP', 'catatSIAP')
-    .addItem('\u25B6 START', 'catatSTART')
-    .addItem('\u25A0 SELESAI', 'catatSELESAI')
-    .addItem('\u21BB Reset waktu', 'resetWaktuRun')
+    .createMenu(MENU_NAME)
+    .addItem('SIAP', 'catatSIAP')
+    .addItem('START', 'catatSTART')
+    .addItem('SELESAI', 'catatSELESAI')
+    .addItem('Reset waktu', 'resetWaktuRun')
     .addSeparator()
-    .addItem('Buka stopwatch live (sidebar)', 'showStopwatchSidebar')
+    .addItem('Stopwatch live (sidebar)', 'showStopwatchSidebar')
     .addSeparator()
-    .addItem('\u2699 Setup sheet Log Run (sekali)', 'setupLogRunSheet')
+    .addItem('Setup sheet (sekali)', 'setupLogRunSheet')
     .addToUi();
 }
 
-/**
- * Jalankan sekali setelah paste script — isi rumus durasi + perbaiki teks petunjuk.
- * Bisa juga di Script Editor: pilih setupLogRunSheet → Run.
- */
 function setupLogRunSheet() {
   var sheet = getLogSheet_();
 
@@ -49,53 +65,52 @@ function setupLogRunSheet() {
   sheet.getRange('J8').setValue('Durasi final:');
   sheet.getRange('J9').setValue('Menit:');
 
-  try {
-    sheet.getRange('J6:L6').merge();
-  } catch (e) { /* sudah merge */ }
-  sheet.getRange('J6').setValue(
-    'STOPWATCH — menu \u23F1 Stopwatch Run (Google Sheets)'
-  );
+  safeMerge_(sheet, 'J6:L6');
+  sheet.getRange('J6').setValue('STOPWATCH — menu LKS Stopwatch (bar atas)');
 
-  try {
-    sheet.getRange('J10:L10').merge();
-  } catch (e) { /* sudah merge */ }
+  safeMerge_(sheet, 'J10:L10');
   sheet.getRange('J10').setValue(
-    'Klik menu Stopwatch Run \u2192 SIAP / START / SELESAI. ' +
-    'Manual: Ctrl+Shift+; di sel B8/E8/H8.'
+    'Menu LKS Stopwatch → SIAP / START / SELESAI. Manual: Ctrl+Shift+; di B8/E8/H8.'
   );
 
-  // Skor otomatis dari Modul E (baris HASIL SINGKAT)
   var hasilRow = findRowByLabel_(sheet, 'Kubus berhasil ditempatkan benar:');
   if (hasilRow > 0) {
     sheet.getRange(hasilRow, 3).setFormula("=COUNTIF('Modul E'!H7:H15,1)");
     sheet.getRange(hasilRow + 1, 3).setFormula("='Modul E'!J16");
   }
 
-  // Modul E tarik waktu START dari Log Run
   var modulE = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Modul E');
   if (modulE) {
     modulE.getRange('D4').setFormula("='Log Run Otonom'!E8");
     modulE.getRange('D4').setNumberFormat('HH:mm:ss');
   }
 
+  buatMenuStopwatch_();
+
   SpreadsheetApp.getActive().toast(
-    'Setup selesai — rumus K7/K8/K9 + skor Modul E aktif. Refresh halaman.',
+    'Setup selesai. Cek menu "' + MENU_NAME + '" di bar atas.',
     'LKS 2026',
-    5
+    6
   );
 }
 
+function safeMerge_(sheet, a1) {
+  try {
+    sheet.getRange(a1).merge();
+  } catch (e) {
+    /* sudah merge */
+  }
+}
+
 function findRowByLabel_(sheet, label) {
-  var finder = sheet.createTextFinder(label).matchEntireCell(false);
-  var cell = finder.findNext();
+  var cell = sheet.createTextFinder(label).matchEntireCell(false).findNext();
   return cell ? cell.getRow() : -1;
 }
 
 function getLogSheet_() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(LOG_SHEET);
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(LOG_SHEET);
   if (!sheet) {
-    throw new Error('Sheet "' + LOG_SHEET + '" tidak ditemukan.');
+    throw new Error('Tab "' + LOG_SHEET + '" tidak ada. Pastikan nama sheet persis sama.');
   }
   return sheet;
 }
@@ -108,15 +123,18 @@ function stampNow_(sheet, a1) {
 
 function catatSIAP() {
   stampNow_(getLogSheet_(), CELL_SIAP);
-  SpreadsheetApp.getActive().toast('Waktu SIAP tercatat di ' + CELL_SIAP, 'Stopwatch', 3);
+  SpreadsheetApp.getActive().toast('SIAP tercatat di B8', MENU_NAME, 3);
 }
 
 function catatSTART() {
   var sheet = getLogSheet_();
   stampNow_(sheet, CELL_START);
-  PropertiesService.getDocumentProperties().setProperty('lks_stopwatch_start', String(new Date().getTime()));
+  PropertiesService.getDocumentProperties().setProperty(
+    'lks_stopwatch_start',
+    String(new Date().getTime())
+  );
   sheet.getRange(CELL_LIVE).setValue(0).setNumberFormat('[h]:mm:ss');
-  SpreadsheetApp.getActive().toast('START — stopwatch jalan. Buka sidebar untuk live timer.', 'Stopwatch', 4);
+  SpreadsheetApp.getActive().toast('START — buka sidebar untuk timer live', MENU_NAME, 4);
 }
 
 function catatSELESAI() {
@@ -124,7 +142,7 @@ function catatSELESAI() {
   stampNow_(sheet, CELL_SELESAI);
   PropertiesService.getDocumentProperties().deleteProperty('lks_stopwatch_start');
   updateLiveDuration_(sheet);
-  SpreadsheetApp.getActive().toast('SELESAI — durasi final di K8/K9.', 'Stopwatch', 3);
+  SpreadsheetApp.getActive().toast('SELESAI — lihat durasi di K8/K9', MENU_NAME, 3);
 }
 
 function resetWaktuRun() {
@@ -134,32 +152,55 @@ function resetWaktuRun() {
   sheet.getRange(CELL_SELESAI).clearContent();
   sheet.getRange(CELL_LIVE).clearContent();
   PropertiesService.getDocumentProperties().deleteProperty('lks_stopwatch_start');
-  SpreadsheetApp.getActive().toast('Waktu run direset.', 'Stopwatch', 3);
+  SpreadsheetApp.getActive().toast('Waktu direset', MENU_NAME, 3);
 }
 
 function updateLiveDuration_(sheet) {
   var start = sheet.getRange(CELL_START).getValue();
   var end = sheet.getRange(CELL_SELESAI).getValue();
-  if (start && end) {
+  if (start && end && start.getTime && end.getTime) {
     var ms = end.getTime() - start.getTime();
     sheet.getRange(CELL_LIVE).setValue(ms / 86400000).setNumberFormat('[h]:mm:ss');
   }
 }
 
 function showStopwatchSidebar() {
-  var html = HtmlService.createHtmlOutputFromFile('StopwatchSidebar')
+  var html = HtmlService.createHtmlOutput(getSidebarHtml_())
     .setTitle('Stopwatch Run')
-    .setWidth(260);
+    .setWidth(280);
   SpreadsheetApp.getUi().showSidebar(html);
 }
 
-/** Dipanggil dari sidebar HTML setiap detik */
+function getSidebarHtml_() {
+  return [
+    '<!DOCTYPE html><html><head><base target="_top">',
+    '<style>',
+    'body{font-family:Arial,sans-serif;padding:12px;text-align:center}',
+    '#clock{font-size:36px;font-weight:bold;color:#c00000;margin:16px 0}',
+    'button{display:block;width:100%;margin:6px 0;padding:10px;font-size:14px;cursor:pointer}',
+    '.hint{font-size:12px;color:#555}',
+    '</style></head><body>',
+    '<div class="hint">Timer live (update tiap detik)</div>',
+    '<div id="clock">00:00:00</div>',
+    '<button onclick="run(\'catatSIAP\')">SIAP</button>',
+    '<button onclick="run(\'catatSTART\')">START</button>',
+    '<button onclick="run(\'catatSELESAI\')">SELESAI</button>',
+    '<button onclick="run(\'resetWaktuRun\')">Reset</button>',
+    '<p class="hint">Waktu di B8, E8, H8</p>',
+    '<script>',
+    'function tick(){google.script.run.withSuccessHandler(function(s){',
+    'document.getElementById("clock").textContent=s.display;}).getStopwatchState();}',
+    'function run(fn){google.script.run.withSuccessHandler(tick)[fn]();}',
+    'tick();setInterval(tick,1000);',
+    '</script></body></html>',
+  ].join('');
+}
+
 function getStopwatchState() {
   var sheet = getLogSheet_();
   var startVal = sheet.getRange(CELL_START).getValue();
   var endVal = sheet.getRange(CELL_SELESAI).getValue();
-  var props = PropertiesService.getDocumentProperties();
-  var t0 = props.getProperty('lks_stopwatch_start');
+  var t0 = PropertiesService.getDocumentProperties().getProperty('lks_stopwatch_start');
 
   if (!startVal || endVal) {
     return { running: false, display: '--:--:--' };
@@ -170,8 +211,7 @@ function getStopwatchState() {
     return { running: false, display: '--:--:--' };
   }
 
-  var elapsed = Math.max(0, Date.now() - startMs);
-  return { running: true, display: formatMs_(elapsed) };
+  return { running: true, display: formatMs_(Math.max(0, Date.now() - startMs)) };
 }
 
 function formatMs_(ms) {
@@ -184,4 +224,10 @@ function formatMs_(ms) {
 
 function pad_(n) {
   return (n < 10 ? '0' : '') + n;
+}
+
+/** Tes: Run dari Script Editor — harus muncul popup "Script OK" */
+function testScriptOK() {
+  getLogSheet_();
+  SpreadsheetApp.getUi().alert('Script OK — sheet Log Run Otonom ditemukan.');
 }

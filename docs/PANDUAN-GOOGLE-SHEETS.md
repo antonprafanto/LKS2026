@@ -11,42 +11,68 @@ Jika Anda pakai **Google Sheets**, beberapa fitur **tidak otomatis jalan** setel
 |----------------|------------------|
 | Tombol **▶ SIAP / START / SELESAI** (macro VBA) | **Tidak ada** — VBA tidak didukung |
 | File **.xlsm** | Macro **dihapus** saat di-upload |
-| **F9** refresh durasi | **Tidak ada** — tidak ada tombol F9 |
-| Rumus `NOW()` durasi live | Hanya update saat sel **diedit**, bukan live otomatis |
-
-Itu sebabnya di spreadsheet Anda tombol stopwatch **kosong / tidak ada**, dan kolom **K7 (Durasi live)** tidak bergerak.
+| **F9** refresh durasi | **Tidak ada** |
+| Rumus `NOW()` durasi live | Hanya update saat sel **diedit** |
 
 ---
 
-## Solusi: Apps Script stopwatch (gratis, ~5 menit setup)
+## Instalasi stopwatch (SATU FILE saja)
 
-### Langkah 2 — Pasang script (sekali)
+### Langkah A — Paste script
 
-1. Buka spreadsheet Anda di Google Sheets  
-2. **Extensions → Apps Script**  
-3. Buat file **`Code.gs`** — salin isi dari repo:  
-   [`scripts/google-apps-script/LogRunStopwatch.gs`](../scripts/google-apps-script/LogRunStopwatch.gs)  
-4. Klik **+** → **HTML** → nama file **`StopwatchSidebar`**  
-   Salin isi: [`scripts/google-apps-script/StopwatchSidebar.html`](../scripts/google-apps-script/StopwatchSidebar.html)  
-5. **Save** → di Script Editor pilih fungsi **`setupLogRunSheet`** → klik **Run** (izinkan akses saat diminta)  
-6. **Refresh** spreadsheet (F5) — menu **⏱ Stopwatch Run** muncul
+1. Buka spreadsheet di Google Sheets  
+2. **Extensions → Apps Script** *(wajib dari spreadsheet ini, bukan script.google.com)*  
+3. Hapus **semua** isi file `Code.gs`  
+4. Paste **seluruh** isi:  
+   https://raw.githubusercontent.com/antonprafanto/LKS2026/main/scripts/google-apps-script/LogRunStopwatch.gs  
+5. Klik **Save** (ikon disket)
 
-> **Setup otomatis:** langkah 5 mengisi rumus K7/K8/K9, teks petunjuk, dan skor Modul E.  
-> Bisa juga lewat menu **⏱ Stopwatch Run → ⚙ Setup sheet Log Run (sekali)** setelah refresh.
+> **Tidak perlu** file HTML terpisah — versi terbaru sudah satu file.
 
-### Langkah 3 — Pakai saat run
+### Langkah B — Buat menu (WAJIB, sekali)
 
-1. Menu baru: **⏱ Stopwatch Run** (pojok kanan atas)  
-2. **▶ SIAP** → waktu masuk **B8**  
-3. **▶ START** → waktu masuk **E8**  
-4. **Buka stopwatch live (sidebar)** → angka jalan tiap detik (opsional)  
-5. **■ SELESAI** → waktu masuk **H8**
+Menu **tidak muncul otomatis** sampai Anda Run + izinkan akses:
 
-Atau buka sidebar dulu — di sana ada tombol SIAP/START/SELESAI + jam live.
+1. Di Apps Script, dropdown fungsi → pilih **`buatMenuStopwatch`**
+2. Klik **Run** ▶
+3. **Authorize / Izinkan** (Review Permissions → pilih akun → Advanced → Allow)
+4. Harus muncul popup: *"Menu LKS Stopwatch sudah dibuat"*
+5. **Kembali ke tab spreadsheet** — menu **`LKS Stopwatch`** ada di **bar atas** (sebelah Help)
 
-### Langkah 4 — Rumus (jika setup belum dijalankan)
+### Langkah C — Setup rumus (sekali)
 
-Di sheet **Log Run Otonom**, paste rumus ini:
+1. Apps Script → pilih **`setupLogRunSheet`** → **Run**
+2. Kembali ke tab **Log Run Otonom** — kolom K7/K8/K9 terisi rumus
+
+### Langkah D — Tes
+
+1. Menu **LKS Stopwatch → SIAP** → sel **B8** terisi waktu  
+2. **START** → **E8** terisi  
+3. **SELESAI** → **H8** terisi, **K8** durasi final
+
+---
+
+## Menu tidak muncul? Checklist
+
+| # | Cek | Solusi |
+|---|-----|--------|
+| 1 | Script dibuka dari **script.google.com** terpisah | Hapus project itu. Buka spreadsheet → **Extensions → Apps Script** dari file yang benar |
+| 2 | Belum **Run + Authorize** | Run **`buatMenuStopwatch`** → izinkan semua |
+| 3 | Masih di tab Apps Script | Klik **tab spreadsheet** (bukan tab script) |
+| 4 | Tab belum di-refresh | **Tutup** spreadsheet → buka lagi dari Drive |
+| 5 | Error saat Run | Apps Script → **Executions** (ikon jam) → baca error merah |
+| 6 | Tes koneksi script | Run **`testScriptOK`** — harus popup "Script OK" |
+| 7 | Nama tab salah | Harus ada tab persis **`Log Run Otonom`** (spasi, huruf besar kecil sama) |
+
+---
+
+## Pintasan manual (tanpa menu)
+
+Klik sel **B8** / **E8** / **H8** → **`Ctrl+Shift+;`**
+
+---
+
+## Rumus manual (jika setup gagal)
 
 | Sel | Rumus |
 |-----|--------|
@@ -54,47 +80,13 @@ Di sheet **Log Run Otonom**, paste rumus ini:
 | **K8** | `=IF(AND(E8<>"",H8<>""),H8-E8,"")` |
 | **K9** | `=IF(K8="","",ROUND(K8*24*60,1))` |
 
-Format sel K7/K8: **Format → Number → Duration**
-
-### Langkah 5 — Update teks petunjuk (opsional)
-
-Ganti baris 6 dan 10 yang masih bertuliskan «file .xlsm, Enable Macro» menjadi:
-
-> **STOPWATCH:** menu **⏱ Stopwatch Run** (Google Sheets) — bukan tombol Excel.
-
 ---
 
-## Pintasan waktu manual (tanpa menu)
-
-| Aksi | Pintasan Google Sheets |
-|------|------------------------|
-| Catat waktu | Klik sel B8/E8/H8 → **`Ctrl+Shift+;`** |
-
----
-
-## Hal lain yang sering rusak di Google Sheets
-
-| Masalah | Penyebab | Solusi |
-|---------|----------|--------|
-| Skor Modul E = 0 | Referensi antar-sheet / import | Pastikan nama tab sama persis: `Modul E`, `Undian Kubus` |
-| Checklist «BELUM» | Rumus COUNTIF | Isi **1** di kolom C baris 13–20 |
-| Link GitHub baris 2 tidak jalan | Hyperlink Excel | Buka manual: [PANDUAN-LOG-RUN.md](PANDUAN-LOG-RUN.md) |
-
----
-
-## Rekomendasi panitia
+## Rekomendasi
 
 | Situasi | Saran |
 |---------|--------|
-| Hari lomba, juri di lapangan | **Microsoft Excel .xlsm** (stopwatch + rumus paling stabil) |
-| Backup cloud / banyak juri online | Google Sheets **+ Apps Script** (panduan ini) |
-| Tanpa internet | Excel desktop wajib |
+| Hari lomba | **Excel .xlsm** (paling stabil) |
+| Google Sheets | Script di atas + menu **LKS Stopwatch** |
 
----
-
-## File sumber script
-
-- [`LogRunStopwatch.gs`](../scripts/google-apps-script/LogRunStopwatch.gs)  
-- [`StopwatchSidebar.html`](../scripts/google-apps-script/StopwatchSidebar.html)
-
-*Acuan penilaian tetap: SOP-JURI.md + Marking Scheme CIS.*
+Script: [`LogRunStopwatch.gs`](../scripts/google-apps-script/LogRunStopwatch.gs)
